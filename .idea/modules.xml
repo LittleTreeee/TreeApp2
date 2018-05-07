@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/OpenCV-android-sdk/samples/15-puzzle/15-puzzle.iml" filepath="$PROJECT_DIR$/OpenCV-android-sdk/samples/15-puzzle/15-puzzle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/generated/source/aidl/aidl.iml" filepath="$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/generated/source/aidl/aidl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TreeMeasure/app/src/androidTest/androidTest.iml" filepath="$PROJECT_DIR$/TreeMeasure/app/src/androidTest/androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/generated/source/buildConfig/androidTest/androidTest1.iml" filepath="$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/generated/source/buildConfig/androidTest/androidTest1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/generated/source/r/androidTest/androidTest2.iml" filepath="$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/generated/source/r/androidTest/androidTest2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/generated/source/buildConfig/buildConfig.iml" filepath="$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/generated/source/buildConfig/buildConfig.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OpenCV-android-sdk/samples/camera-calibration/camera-calibration.iml" filepath="$PROJECT_DIR$/OpenCV-android-sdk/samples/camera-calibration/camera-calibration.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OpenCV-android-sdk/samples/color-blob-detection/color-blob-detection.iml" filepath="$PROJECT_DIR$/OpenCV-android-sdk/samples/color-blob-detection/color-blob-detection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/intermediates/manifest/androidTest/debug/debug.iml" filepath="$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/intermediates/manifest/androidTest/debug/debug.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/intermediates/manifests/full/debug/debug1.iml" filepath="$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/intermediates/manifests/full/debug/debug1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/intermediates/manifests/aapt/debug/debug2.iml" filepath="$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/intermediates/manifests/aapt/debug/debug2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OpenCV-android-sdk/samples/face-detection/face-detection.iml" filepath="$PROJECT_DIR$/OpenCV-android-sdk/samples/face-detection/face-detection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OpenCV-android-sdk/samples/image-manipulations/image-manipulations.iml" filepath="$PROJECT_DIR$/OpenCV-android-sdk/samples/image-manipulations/image-manipulations.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TreeMeasure/openCVLibrary341/src/main/main.iml" filepath="$PROJECT_DIR$/TreeMeasure/openCVLibrary341/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TreeMeasure/app/src/main/main1.iml" filepath="$PROJECT_DIR$/TreeMeasure/app/src/main/main1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/generated/source/r/r.iml" filepath="$PROJECT_DIR$/TreeMeasure/openCVLibrary341/build/generated/source/r/r.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OpenCV-android-sdk/sdk/java/sdk.iml" filepath="$PROJECT_DIR$/OpenCV-android-sdk/sdk/java/sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TreeMeasure/app/src/test/test.iml" filepath="$PROJECT_DIR$/TreeMeasure/app/src/test/test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OpenCV-android-sdk/samples/tutorial-1-camerapreview/tutorial-1-camerapreview.iml" filepath="$PROJECT_DIR$/OpenCV-android-sdk/samples/tutorial-1-camerapreview/tutorial-1-camerapreview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OpenCV-android-sdk/samples/tutorial-2-mixedprocessing/tutorial-2-mixedprocessing.iml" filepath="$PROJECT_DIR$/OpenCV-android-sdk/samples/tutorial-2-mixedprocessing/tutorial-2-mixedprocessing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OpenCV-android-sdk/samples/tutorial-3-cameracontrol/tutorial-3-cameracontrol.iml" filepath="$PROJECT_DIR$/OpenCV-android-sdk/samples/tutorial-3-cameracontrol/tutorial-3-cameracontrol.iml" />
+    </modules>
+  </component>
+</project>
