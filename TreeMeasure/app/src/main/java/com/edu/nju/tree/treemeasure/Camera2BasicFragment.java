@@ -885,8 +885,6 @@ public class Camera2BasicFragment extends Fragment
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
-                    //todo showToast()在这里会对保存路径有一个提示
-                    showToast("Saved: " + mFile);
                     Log.d(TAG, mFile.toString());
                     unlockFocus();
                 }

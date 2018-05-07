@@ -5,6 +5,7 @@ import android.graphics.*;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -53,7 +54,8 @@ public class MarkPadFragment extends Fragment {
         bytes = (byte[])getArguments().get("bytes");
         if(bytes!=null) {
             options = new BitmapFactory.Options();
-            options.inSampleSize = calculateInSampleSize(options, screenWidth, screenHeight);
+            options.inSampleSize = 2;
+//            options.inSampleSize = calculateInSampleSize(options, screenWidth, screenHeight);
             photo = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
         }
 
@@ -155,9 +157,12 @@ public class MarkPadFragment extends Fragment {
                 + ".jpg";
         File mFile = new File(getActivity().getApplication().getExternalFilesDir(null), fname);
 
+
+        Log.d("ImagePath", mFile.toString());
+
         try {
             output = new FileOutputStream(mFile);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
             output.flush();
 
         } catch (IOException e) {
