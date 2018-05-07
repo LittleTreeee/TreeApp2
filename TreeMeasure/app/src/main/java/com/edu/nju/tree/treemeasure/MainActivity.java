@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
         //整个项目只有一个activity，启动以后都是activity上fragment之间的切换
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         if (null == savedInstanceState) {
             getSupportFragmentManager().beginTransaction()
