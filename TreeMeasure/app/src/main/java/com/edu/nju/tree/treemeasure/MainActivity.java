@@ -5,7 +5,11 @@ import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+
+import com.edu.nju.tree.treemeasure.utils.ImageProcess;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -14,9 +18,12 @@ import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import static org.opencv.core.CvType.CV_8UC3;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+//        super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_main);
-//
+
 //        Button button = (Button)findViewById(R.id.button);
 //        button.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -64,24 +71,26 @@ public class MainActivity extends AppCompatActivity {
 
         InputStream is = null;
         try {
-            is = getAssets().open("dot3.JPG");
+            is = getAssets().open("56_mark.jpg");
         } catch (IOException e) {
             e.printStackTrace();
         }
         Bitmap bitmap = BitmapFactory.decodeStream(is);
 
+        Log.i("---------------", "before image process");
 
-        mat = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
 
-        Utils.bitmapToMat(bitmap, mat);
+        double treeWidth = ImageProcess.treeWidth(bitmap);
 
-        Bitmap bmp= null;
-        bmp =Bitmap.createBitmap( mat.width(),  mat.height(),  Bitmap.Config.ARGB_8888);
-
-        Utils.matToBitmap(mat, bmp);
-
-        mImageView = (ImageView) findViewById(R.id.image);
-        mImageView.setImageBitmap(bmp);
+        Log.i("----------treewidth", String.valueOf(treeWidth));
+//
+//        Bitmap bmp= null;
+//        bmp =Bitmap.createBitmap( hsvImage.width(),  hsvImage.height(),  Bitmap.Config.ARGB_8888);
+//
+//        Utils.matToBitmap(hsvImage, bmp);
+//
+//        mImageView = (ImageView) findViewById(R.id.image);
+//        mImageView.setImageBitmap(bmp);
 
 
     }

@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.edu.nju.tree.treemeasure.utils.ImageProcess;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -82,8 +84,13 @@ public class MarkPadFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //todo 保存
-                saveImage();
-                Toast.makeText(mContext, "保存成功", Toast.LENGTH_SHORT).show();
+//                saveImage();
+
+                double treeWidth = ImageProcess.treeWidth(bitmap);
+
+                Toast.makeText(mContext, "胸径: "+ treeWidth, Toast.LENGTH_LONG).show();
+                
+
             }
         });
 
