@@ -16,5 +16,6 @@
 <resources>
     <style name="MaterialTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@mipmap/icon_splash</item>
     </style>
 </resources>
