@@ -1,4 +1,4 @@
-package com.edu.nju.tree.treemeasure;
+package com.edu.nju.tree.treemeasure.Fragment;
 
 import android.content.Context;
 import android.graphics.*;
@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.edu.nju.tree.treemeasure.R;
 import com.edu.nju.tree.treemeasure.utils.ImageProcess;
 
 import java.io.File;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.edu.nju.tree.treemeasure;
+package com.edu.nju.tree.treemeasure.Fragment;
 
 import android.Manifest;
 import android.app.Activity;
@@ -47,6 +47,9 @@ import android.util.SparseIntArray;
 import android.view.*;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.edu.nju.tree.treemeasure.View.AutoFitTextureView;
+import com.edu.nju.tree.treemeasure.R;
+import com.edu.nju.tree.treemeasure.View.LevelView;
 
 import java.io.File;
 import java.nio.ByteBuffer;
@@ -70,6 +73,7 @@ public class Camera2BasicFragment extends Fragment
     private float[] accelerometerValues = new float[3];
     private float[] magneticFieldValues = new float[3];
     private TextView degreeTextView;
+    private LevelView levelView;
 
     private final SensorEventListener sensorEventListener = new SensorEventListener() {
 
@@ -91,23 +95,6 @@ public class Camera2BasicFragment extends Fragment
     };
 
 
-    //todo: 更新是否垂直的信息
-    //关于传感器的调用：https://www.cnblogs.com/mengdd/archive/2013/05/19/3086781.html
-    private void updateOrientation(){
-        float[] values = new float[3];
-        float[] R = new float[9];
-        SensorManager.getRotationMatrix(R, null, accelerometerValues,
-                magneticFieldValues);
-        SensorManager.getOrientation(R, values);
-        double degree = Math.toDegrees(values[1]);
-        int showDegree = (int) Math.abs(degree)+1;
-        String isVertical = "手机尚未竖直";
-        if(Math.abs(degree)<95&&Math.abs(degree)>85){
-            isVertical = "手机已竖直";
-        }
-        degreeTextView.setText(showDegree+" "+isVertical);
-    }
-
     /**
      * Conversion from screen rotation to JPEG orientation.
      */
@@ -115,12 +102,7 @@ public class Camera2BasicFragment extends Fragment
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
 
-    static {
-        ORIENTATIONS.append(Surface.ROTATION_0, 90);
-        ORIENTATIONS.append(Surface.ROTATION_90, 0);
-        ORIENTATIONS.append(Surface.ROTATION_180, 270);
-        ORIENTATIONS.append(Surface.ROTATION_270, 180);
-    }
+
 
     /**
      * Tag for the {@link Log}.
@@ -457,16 +439,18 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
+        View view = inflater.inflate(R.layout.fragment_camera2_basic, container, false);
+        levelView = view.findViewById(R.id.levelview);
+        mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+        degreeTextView = (TextView) view.findViewById(R.id.degree);
+        return view;
+//        return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
     }
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         view.findViewById(R.id.picture).setOnClickListener(this);
         view.findViewById(R.id.info).setOnClickListener(this);
-        mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
-        degreeTextView = (TextView) view.findViewById(R.id.degree);
-
 
         sensorManager = (SensorManager)this.getActivity().getSystemService(Context.SENSOR_SERVICE);
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -474,7 +458,7 @@ public class Camera2BasicFragment extends Fragment
         //注册监听
         sensorManager.registerListener(sensorEventListener, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
         sensorManager.registerListener(sensorEventListener, magneticSensor, SensorManager.SENSOR_DELAY_GAME);
-        updateOrientation();
+//        updateOrientation();
     }
 
     @Override
@@ -1125,5 +1109,44 @@ public class Camera2BasicFragment extends Fragment
         }
     }
 
+    // 定义水平仪能处理的最大倾斜角，超过该角度，气泡将直接位于边界
+    private final int MAX_ANGLE = 30;
+
+    //todo: 更新是否垂直的信息
+    //关于传感器的调用：https://www.cnblogs.com/mengdd/archive/2013/05/19/3086781.html
+    private void updateOrientation(){
+        float[] values = new float[3];
+        float[] R = new float[9];
+        SensorManager.getRotationMatrix(R, null, accelerometerValues,
+                magneticFieldValues);
+        SensorManager.getOrientation(R, values);
+        float yAngle = values[1];
+        double degree = Math.toDegrees(yAngle);
+        int showDegree = (int) Math.abs(degree)+1;
+        String isVertical = "手机尚未竖直";
+        if(Math.abs(degree)<95&&Math.abs(degree)>85){
+            isVertical = "手机已竖直";
+        }
+
+        int y = (mTextureView.getHeight()-levelView.bubble.getHeight())/2;
+        // 如果与Y轴的倾斜角还在最大角度之内
+        if (Math.abs(yAngle) <= MAX_ANGLE) {
+            // 根据与Y轴的倾斜角计算Y坐标的变化值（倾斜角度越大，Y坐标变化越大）
+            int deltaY = (int) ((mTextureView.getHeight() - mTextureView
+                    .getHeight()) / 2 * yAngle / MAX_ANGLE);
+            y += deltaY;
+        }
+        // 如果与Y轴的倾斜角已经大于MAX_ANGLE，气泡应到最下边
+        else if (yAngle > MAX_ANGLE) {
+            y = 0;
+        }
+        // 如果与Y轴的倾斜角已经小于负的MAX_ANGLE，气泡应到最右边
+        else {
+            y = 0;
+        }
+        levelView.bubbleY = y;
+        levelView.postInvalidate();
+        degreeTextView.setText(showDegree+" "+isVertical+y);
+    }
 
 }

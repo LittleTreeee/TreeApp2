@@ -1,9 +1,10 @@
-package com.edu.nju.tree.treemeasure;
+package com.edu.nju.tree.treemeasure.Activity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import com.edu.nju.tree.treemeasure.R;
 
 public class LaunchActivity extends Activity {
 
