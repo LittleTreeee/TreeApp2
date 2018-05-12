@@ -28,7 +28,7 @@ public class LevelView extends View {
         // 根据气泡坐标绘制气泡
         canvas.drawBitmap(bubble, bubbleX, bubbleY, null);
         Paint paint = new Paint();
-        paint.setColor(Color.RED);
+        paint.setColor(Color.WHITE);
         canvas.drawLine(0,lineY,this.getWidth(),lineY,paint);
     }
 }

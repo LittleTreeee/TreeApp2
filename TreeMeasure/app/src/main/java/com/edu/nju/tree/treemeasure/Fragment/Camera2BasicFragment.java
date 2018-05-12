@@ -1015,7 +1015,7 @@ public class Camera2BasicFragment extends Fragment
 //                    }
 //                }
 //            }
-
+            Log.d("mImage", "宽"+mImage.getWidth()+"高"+mImage.getHeight());
             ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
             byte[] bytes = new byte[buffer.remaining()];
             buffer.get(bytes);

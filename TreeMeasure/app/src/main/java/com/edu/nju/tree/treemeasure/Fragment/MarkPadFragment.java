@@ -57,23 +57,38 @@ public class MarkPadFragment extends Fragment {
         bytes = (byte[])getArguments().get("bytes");
         if(bytes!=null) {
             options = new BitmapFactory.Options();
-            options.inSampleSize = 2;
-//            options.inSampleSize = calculateInSampleSize(options, screenWidth, screenHeight);
-            photo = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+            photo =BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         }
 
         mContext = getContext();
 
-        bitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888);
-        canvas = new Canvas(bitmap);
         paint = new Paint();
         paint.setColor(Color.RED);
         paint.setStrokeWidth(5);
         matrix = new Matrix();
-        // 参数为正则向右旋转（顺时针旋转）
-//        matrix.postRotate(45);
-//        canvas.drawBitmap(photo, matrix, paint);
-        canvas.drawBitmap(photo, 0, 0, null);
+        matrix.setRotate(90);
+        photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
+        bitmap = Bitmap.createBitmap(screenWidth,screenHeight, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
+
+        int right = 0;
+        int bottom = 0;
+        double widthRatio = screenWidth/(photo.getWidth()+0.0);
+        double heightRatio = screenHeight/(photo.getHeight()+0.0);
+        double photoRatio = photo.getWidth()/(photo.getHeight()+0.0);
+        if(widthRatio<heightRatio && widthRatio<1){
+            right = screenWidth;
+            bottom = (int)(screenHeight*photoRatio);
+        }else if(heightRatio<widthRatio && heightRatio<1){
+            right = (int)(screenWidth/heightRatio);
+            bottom = screenHeight;
+        }else{
+            right = photo.getWidth();
+            bottom = photo.getHeight();
+        }
+
+//        canvas.drawBitmap(photo,new Rect(0,0,photo.getWidth(),photo.getHeight()),new Rect(80,80,120,120),null);
+        canvas.drawBitmap(photo,null,new Rect(0,0,right,bottom),null);
         imageView.setImageBitmap(bitmap);
 
         mBtnOK = (Button) view.findViewById(R.id.write_pad_ok);
@@ -85,11 +100,11 @@ public class MarkPadFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //todo 保存
-//                saveImage();
-
-                double treeWidth = ImageProcess.treeWidth(bitmap);
-
-                Toast.makeText(mContext, "胸径: "+ treeWidth, Toast.LENGTH_LONG).show();
+                saveImage();
+//
+//                double treeWidth = ImageProcess.treeWidth(bitmap);
+//
+//                Toast.makeText(mContext, "胸径: "+ treeWidth, Toast.LENGTH_LONG).show();
                 
 
             }
@@ -100,6 +115,7 @@ public class MarkPadFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //todo 清除
+
                 Toast.makeText(mContext, "清除", Toast.LENGTH_SHORT).show();
             }
         });
@@ -151,6 +167,25 @@ public class MarkPadFragment extends Fragment {
         });
 
         return view;
+    }
+
+    /**
+     * @param
+     * @param bitmap 对象
+     * @param w 要缩放的宽度
+     * @param h 要缩放的高度
+     * @return newBmp 新 Bitmap对象
+     */
+    public static Bitmap zoomBitmap(Bitmap bitmap, int w, int h){
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        Matrix matrix = new Matrix();
+        float scaleWidth = ((float) w / width);
+        float scaleHeight = ((float) h / height);
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap newBmp = Bitmap.createBitmap(bitmap, 0, 0, width, height,
+                matrix, true);
+        return newBmp;
     }
 
     private void saveImage(){
