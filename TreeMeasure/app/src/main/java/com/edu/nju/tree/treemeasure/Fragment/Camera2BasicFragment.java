@@ -1110,7 +1110,7 @@ public class Camera2BasicFragment extends Fragment
     }
 
     // 定义水平仪能处理的最大倾斜角，超过该角度，气泡将直接位于边界
-    private final int MAX_ANGLE = 30;
+    private final int MAX_ANGLE = 90;
 
     //todo: 更新是否垂直的信息
     //关于传感器的调用：https://www.cnblogs.com/mengdd/archive/2013/05/19/3086781.html
@@ -1127,26 +1127,17 @@ public class Camera2BasicFragment extends Fragment
         if(Math.abs(degree)<95&&Math.abs(degree)>85){
             isVertical = "手机已竖直";
         }
-
         int y = (mTextureView.getHeight()-levelView.bubble.getHeight())/2;
         // 如果与Y轴的倾斜角还在最大角度之内
-        if (Math.abs(yAngle) <= MAX_ANGLE) {
+        if (showDegree <= MAX_ANGLE) {
             // 根据与Y轴的倾斜角计算Y坐标的变化值（倾斜角度越大，Y坐标变化越大）
-            int deltaY = (int) ((mTextureView.getHeight() - mTextureView
-                    .getHeight()) / 2 * yAngle / MAX_ANGLE);
+            int deltaY = (int)((1+degree/MAX_ANGLE)*mTextureView.getHeight()/2);
             y += deltaY;
         }
-        // 如果与Y轴的倾斜角已经大于MAX_ANGLE，气泡应到最下边
-        else if (yAngle > MAX_ANGLE) {
-            y = 0;
-        }
-        // 如果与Y轴的倾斜角已经小于负的MAX_ANGLE，气泡应到最右边
-        else {
-            y = 0;
-        }
         levelView.bubbleY = y;
+        levelView.lineY = mTextureView.getHeight()/2;
         levelView.postInvalidate();
-        degreeTextView.setText(showDegree+" "+isVertical+y);
+        degreeTextView.setText(showDegree+" "+isVertical);
     }
 
 }
