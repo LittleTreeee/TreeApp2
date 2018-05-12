@@ -98,11 +98,12 @@ public class MarkPadFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //todo 保存
-                saveImage();
-//
-//                double treeWidth = ImageProcess.treeWidth(bitmap);
-//
-//                Toast.makeText(mContext, "胸径: "+ treeWidth, Toast.LENGTH_LONG).show();
+//                saveImage();
+                Toast.makeText(mContext, "开始计算...", Toast.LENGTH_LONG).show();
+
+                double treeWidth = ImageProcess.treeWidth(bitmap);
+
+                Toast.makeText(mContext, "胸径: "+ treeWidth, Toast.LENGTH_LONG).show();
                 
 
             }
@@ -117,8 +118,9 @@ public class MarkPadFragment extends Fragment {
                 //清屏
                 p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
                 canvas.drawPaint(p);
-//                Toast.makeText(mContext, "清除", Toast.LENGTH_SHORT).show();
+                p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
                 canvas.drawBitmap(photo,null,new Rect(0,0,right,bottom),null);
+                Toast.makeText(mContext, "清除", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -126,6 +128,12 @@ public class MarkPadFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
+                //todo 取消
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container, new Camera2BasicFragment(), null)
+                        .addToBackStack(null)
+                        .commit();
                 Toast.makeText(mContext, "取消", Toast.LENGTH_SHORT).show();
             }
         });
