@@ -41,6 +41,8 @@ public class MarkPadFragment extends Fragment {
     private Matrix matrix; //矩阵，空间变换
     private float downX = 0, downY=0, upX=0, upY=0; //定义按下和停止位置（x,y）坐标
     private BitmapFactory.Options options;
+    private int right = 0;
+    private int bottom = 0;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,8 +73,6 @@ public class MarkPadFragment extends Fragment {
         bitmap = Bitmap.createBitmap(screenWidth,screenHeight, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
 
-        int right = 0;
-        int bottom = 0;
         double widthRatio = screenWidth/(photo.getWidth()+0.0);
         double heightRatio = screenHeight/(photo.getHeight()+0.0);
         double photoRatio = photo.getWidth()/(photo.getHeight()+0.0);
@@ -86,8 +86,6 @@ public class MarkPadFragment extends Fragment {
             right = photo.getWidth();
             bottom = photo.getHeight();
         }
-
-//        canvas.drawBitmap(photo,new Rect(0,0,photo.getWidth(),photo.getHeight()),new Rect(80,80,120,120),null);
         canvas.drawBitmap(photo,null,new Rect(0,0,right,bottom),null);
         imageView.setImageBitmap(bitmap);
 
@@ -115,8 +113,12 @@ public class MarkPadFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //todo 清除
-
-                Toast.makeText(mContext, "清除", Toast.LENGTH_SHORT).show();
+                Paint p = new Paint();
+                //清屏
+                p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+                canvas.drawPaint(p);
+//                Toast.makeText(mContext, "清除", Toast.LENGTH_SHORT).show();
+                canvas.drawBitmap(photo,null,new Rect(0,0,right,bottom),null);
             }
         });
 
@@ -124,7 +126,6 @@ public class MarkPadFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-//                cancel();
                 Toast.makeText(mContext, "取消", Toast.LENGTH_SHORT).show();
             }
         });
