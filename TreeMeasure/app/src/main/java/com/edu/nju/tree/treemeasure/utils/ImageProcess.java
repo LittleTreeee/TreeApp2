@@ -6,7 +6,9 @@ import android.util.Log;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -20,10 +22,10 @@ public class ImageProcess {
 
     private static final int scope = 20;
 
-    private static int redcolor = 0;
-    private static int bluecolor = 1;
+    private static int redcolor = 255;
+    private static int bluecolor = 100;
 
-    private static double realDistance = 1;
+    private static double realDistance = 10.75;
 
     /**
      * 将mat中不同区域缩为一个点，返回
@@ -37,16 +39,14 @@ public class ImageProcess {
         //把获得的所有点分类
         for ( int i = 0; i<mat.rows(); i++ ){
             for ( int j = 0; j<mat.cols(); j++ ){
-                if ( mat.get(i, j)[0] != 0 ){
+                if ( mat.get(i, j)[0] == color ){
                     boolean inserted = false;      //是否被放到一个区域中
                     for ( int k = 0; k<areas.size(); k++ ){
                         if ( i <= areas.get(k).maxX+scope && i >= areas.get(k).minX-scope &&
                                 j <= areas.get(k).maxY+scope && j >=areas.get(k).minY-scope){
 
                             //点在区域内，加入区域
-                            Spot spot = new Spot();
-                            spot.x = i;
-                            spot.y = j;
+                            Spot spot = new Spot(i, j);
                             areas.get(k).spots.add(spot);
                             inserted = true;
 
@@ -125,18 +125,12 @@ public class ImageProcess {
 
     /**
      * 得到两个红点之间的距离
-     * @param bitmap
+     * @param hsvImage
      * @return
      */
-    public static double redDistance(Bitmap bitmap){
+    public static double[] redDistance(Mat hsvImage){
 
-        Mat src = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
-
-        Mat hsvImage = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
-
-        Utils.bitmapToMat(bitmap, src);
-
-        Imgproc.cvtColor(src, hsvImage, 41);
+        double[] distance = new double[2];
 
         for ( int i = 0; i<hsvImage.rows(); i++ ){
             for ( int j = 0; j<hsvImage.cols(); j++ ){
@@ -145,73 +139,43 @@ public class ImageProcess {
                 S = hsvImage.get(i, j)[1];
                 V = hsvImage.get(i, j)[2];
 
+                //红色
                 if ( H>=156 && H<=180 &&  S > 100 && V > 200 ){
                     hsvImage.put(i, j, 255.0,255.0,255.0);
-
-                }else{
+                }
+                //蓝色
+                else if ( H>=100 && H<=124 && S>200 && V > 200 ){
+                    hsvImage.put(i, j, 100.0,255.0,255.0);
+                }
+                //其他
+                else{
                     hsvImage.put(i, j, 0.0,0.0,0.0);
                 }
             }
         }
 
+        // 计算红色点的距离
         List<Spot> pointRed = getPoints(hsvImage, redcolor);
 
         Spot red1 = new Spot();
         Spot red2 = new Spot();
         int ROW = hsvImage.rows();
-        int COL = hsvImage.cols();
         for ( int i = 0; i<pointRed.size(); i++ ){
-            if ( (pointRed.get(i).x)<(ROW/2) && ((pointRed.get(i).x) > (ROW/2 * 0.8)
-                    && (pointRed.get(i).y)<(COL/2*1.2) && (pointRed.get(i).y) > (COL/2 * 0.8) )){
+            if ( (pointRed.get(i).x)<(ROW/2) && ((pointRed.get(i).x) > (ROW/2 * 0.8) )){
                 red1.y = (pointRed.get(i).y);
                 red1.x = pointRed.get(i).x;
             }
-            if ( (pointRed.get(i).x)>(ROW/2) && (pointRed.get(i).x) < (ROW/2 * 1.2)
-                    && (pointRed.get(i).y)<(COL/2*1.2) && (pointRed.get(i).y) > (COL/2 * 0.8)){
+            if ( (pointRed.get(i).x)>(ROW/2) && (pointRed.get(i).x) < (ROW/2 * 1.2) ){
                 red2.y = (pointRed.get(i).y);
                 red2.x = pointRed.get(i).x;
             }
         }
-
-        Log.i("-------*****---------", String.valueOf(red1.x) + " "+ String.valueOf(red1.y));
-        Log.i("-------*****---------", String.valueOf(red2.x) + " "+ String.valueOf(red2.y));
-        double distance = Math.sqrt( (red1.x - red2.x)*(red1.x - red2.x)
+        distance[0] = Math.sqrt( (red1.x - red2.x)*(red1.x - red2.x)
                 + (red1.y - red2.y)*(red1.y - red2.y) );
 
-        Log.i("------------", String.valueOf(distance));
 
-        return distance;
-
-
-    }
-
-    public static double blueDistance(Bitmap bitmap){
-
-        Mat src = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
-
-        Mat hsvImage = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
-
-        Utils.bitmapToMat(bitmap, src);
-
-        Imgproc.cvtColor(src, hsvImage, 41);
-
-        for ( int i = 0; i<hsvImage.rows(); i++ ){
-            for ( int j = 0; j<hsvImage.cols(); j++ ){
-                double H, S, V = 0;
-                H = hsvImage.get(i, j)[0];
-                S = hsvImage.get(i, j)[1];
-                V = hsvImage.get(i, j)[2];
-
-                if ( H>=100 && H<=124 && S>200 && V > 200 ){
-                    hsvImage.put(i, j, 255.0,255.0,255.0);
-
-                }else{
-                    hsvImage.put(i, j, 0.0,0.0,0.0);
-                }
-            }
-        }
-
-        List<Spot> pointBlue = getPoints(hsvImage, redcolor);
+        // 蓝色两条线距离
+        List<Spot> pointBlue = getPoints(hsvImage, bluecolor);
 
         int maxindex = 0;
         for ( int i = 1; i<3; i++ ){
@@ -223,23 +187,37 @@ public class ImageProcess {
         Spot blue1 = pointBlue.get(0);
         Spot blue2 = pointBlue.get(1);
 
-        Log.i("-------blue1---------", String.valueOf(blue1.x) + " "+ String.valueOf(blue1.y));
-        Log.i("-------blue2---------", String.valueOf(blue2.x) + " "+ String.valueOf(blue2.y));
-        double distance = Math.sqrt( (blue1.x - blue2.x)*(blue1.x - blue2.x)
+        distance[1] = Math.sqrt( (blue1.x - blue2.x)*(blue1.x - blue2.x)
                 + (blue1.y - blue2.y)*(blue1.y - blue2.y) );
 
-        Log.i("--------blueDistance", String.valueOf(distance));
 
         return distance;
 
+
     }
 
+
     public static double treeWidth(Bitmap bitmap){
-        double redDistance = redDistance(bitmap);
 
-        double blueDistance = blueDistance(bitmap);
+        long time1 = System.currentTimeMillis();
 
-        double treeWidth = blueDistance/redDistance * realDistance;
+        Mat src = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
+        Mat hsvImage = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
+        Utils.bitmapToMat(bitmap, src);
+
+        Mat roi = new Mat(src, new Rect(src.cols()/4, 0, src.cols()/2, src.rows()));
+
+        Mat resize = new Mat();
+        Imgproc.resize(roi, resize, new Size(roi.width()/2, roi.height()/2));
+        Imgproc.cvtColor(resize, hsvImage, 41);
+
+
+        double[] distance = redDistance(hsvImage);
+
+        double treeWidth = distance[1]/distance[0] * realDistance;
+
+        long time2 = System.currentTimeMillis();
+        Log.i("*******times", String.valueOf(time2-time1));
 
         return treeWidth;
     }

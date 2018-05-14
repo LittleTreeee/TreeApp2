@@ -7,4 +7,12 @@ package com.edu.nju.tree.treemeasure.utils;
 public class Spot {
     int x;
     int y;
+
+    public Spot() {
+    }
+
+    public Spot(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 }
