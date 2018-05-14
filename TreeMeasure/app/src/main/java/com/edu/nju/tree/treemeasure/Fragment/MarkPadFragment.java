@@ -65,7 +65,7 @@ public class MarkPadFragment extends Fragment {
         mContext = getContext();
 
         paint = new Paint();
-        paint.setColor(Color.RED);
+        paint.setColor(Color.BLUE);
         paint.setStrokeWidth(5);
         matrix = new Matrix();
         matrix.setRotate(90);
@@ -129,11 +129,11 @@ public class MarkPadFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //todo 取消
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.container, new Camera2BasicFragment(), null)
-                        .addToBackStack(null)
-                        .commit();
+//                getActivity().getSupportFragmentManager()
+//                        .beginTransaction()
+//                        .replace(R.id.container, new Camera2BasicFragment(), null)
+//                        .commit();
+                getActivity().getSupportFragmentManager().popBackStack();
                 Toast.makeText(mContext, "取消", Toast.LENGTH_SHORT).show();
             }
         });
