@@ -20,6 +20,7 @@ import org.opencv.core.Mat;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,7 +80,8 @@ public class MainActivity extends AppCompatActivity {
 
         double treeWidth = ImageProcess.treeWidth(bitmap);
 
-        Log.i("----------treewidth", String.valueOf(treeWidth));
+
+        Log.i("----------treewidth: ", String.valueOf(treeWidth));
 //
 //        Bitmap bmp= null;
 //        bmp =Bitmap.createBitmap( hsvImage.width(),  hsvImage.height(),  Bitmap.Config.ARGB_8888);

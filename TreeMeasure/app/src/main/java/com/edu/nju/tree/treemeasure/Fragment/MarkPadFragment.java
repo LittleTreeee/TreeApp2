@@ -20,6 +20,7 @@ import com.edu.nju.tree.treemeasure.utils.ImageProcess;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -102,6 +103,10 @@ public class MarkPadFragment extends Fragment {
                 Toast.makeText(mContext, "开始计算...", Toast.LENGTH_LONG).show();
 
                 double treeWidth = ImageProcess.treeWidth(bitmap);
+
+                BigDecimal bg = new BigDecimal(treeWidth);
+                treeWidth = bg.setScale(2, BigDecimal.ROUND_UP).doubleValue();
+
 
                 Toast.makeText(mContext, "胸径: "+ treeWidth, Toast.LENGTH_LONG).show();
                 
