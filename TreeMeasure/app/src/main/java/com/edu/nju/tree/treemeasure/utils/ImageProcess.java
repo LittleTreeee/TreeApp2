@@ -104,6 +104,8 @@ public class ImageProcess {
             List<Spot> spots = areas.get(i).spots;
             int sumx = 0;
             int sumy = 0;
+            if ( spots.size() <= 5 )
+                continue;
             for ( int j = 0; j<spots.size(); j++){
                 sumx += spots.get(j).x;
                 sumy += spots.get(j).y;
@@ -157,8 +159,8 @@ public class ImageProcess {
         // 计算红色点的距离
         List<Spot> pointRed = getPoints(hsvImage, redcolor);
 
-        Spot red1 = new Spot();
-        Spot red2 = new Spot();
+        Spot red1 = pointRed.get(0);
+        Spot red2 = pointRed.get(1);
         int ROW = hsvImage.rows();
         for ( int i = 0; i<pointRed.size(); i++ ){
             if ( (pointRed.get(i).x)<(ROW/2) && ((pointRed.get(i).x) > (ROW/2 * 0.8) )){
@@ -202,15 +204,22 @@ public class ImageProcess {
         long time1 = System.currentTimeMillis();
 
         Mat src = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
+
+        Log.i("---------size--", String.valueOf(src.size()));
+
         Mat hsvImage = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
         Utils.bitmapToMat(bitmap, src);
 
         Mat roi = new Mat(src, new Rect(src.cols()/4, 0, src.cols()/2, src.rows()));
 
+        Log.i("---------size--", String.valueOf(roi.size()));
+
+
         Mat resize = new Mat();
         Imgproc.resize(roi, resize, new Size(roi.width()/2, roi.height()/2));
         Imgproc.cvtColor(resize, hsvImage, 41);
 
+        Log.i("---------size--", String.valueOf(hsvImage.size()));
 
         double[] distance = redDistance(hsvImage);
 
