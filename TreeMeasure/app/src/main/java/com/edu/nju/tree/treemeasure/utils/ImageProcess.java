@@ -134,6 +134,8 @@ public class ImageProcess {
 
         double[] distance = new double[2];
 
+        long time1 = System.currentTimeMillis();
+
         for ( int i = 0; i<hsvImage.rows(); i++ ){
             for ( int j = 0; j<hsvImage.cols(); j++ ){
                 double H, S, V = 0;
@@ -155,23 +157,27 @@ public class ImageProcess {
                 }
             }
         }
+        long time2 = System.currentTimeMillis();
+        Log.i("*******times", String.valueOf(time2-time1));
+
 
         // 计算红色点的距离
         List<Spot> pointRed = getPoints(hsvImage, redcolor);
+        Log.i("-----redpoint ", String.valueOf(pointRed.size()));
 
         Spot red1 = pointRed.get(0);
         Spot red2 = pointRed.get(1);
-        int ROW = hsvImage.rows();
-        for ( int i = 0; i<pointRed.size(); i++ ){
-            if ( (pointRed.get(i).x)<(ROW/2) && ((pointRed.get(i).x) > (ROW/2 * 0.8) )){
-                red1.y = (pointRed.get(i).y);
-                red1.x = pointRed.get(i).x;
-            }
-            if ( (pointRed.get(i).x)>(ROW/2) && (pointRed.get(i).x) < (ROW/2 * 1.2) ){
-                red2.y = (pointRed.get(i).y);
-                red2.x = pointRed.get(i).x;
-            }
-        }
+//        int ROW = hsvImage.rows();
+//        for ( int i = 0; i<pointRed.size(); i++ ){
+//            if ( (pointRed.get(i).x)<(ROW/2) && ((pointRed.get(i).x) > (ROW/2 * 0.8) )){
+//                red1.y = (pointRed.get(i).y);
+//                red1.x = pointRed.get(i).x;
+//            }
+//            if ( (pointRed.get(i).x)>(ROW/2) && (pointRed.get(i).x) < (ROW/2 * 1.2) ){
+//                red2.y = (pointRed.get(i).y);
+//                red2.x = pointRed.get(i).x;
+//            }
+//        }
         distance[0] = Math.sqrt( (red1.x - red2.x)*(red1.x - red2.x)
                 + (red1.y - red2.y)*(red1.y - red2.y) );
 
@@ -201,8 +207,6 @@ public class ImageProcess {
 
     public static double treeWidth(Bitmap bitmap){
 
-        long time1 = System.currentTimeMillis();
-
         Mat src = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
 
         Log.i("---------size--", String.valueOf(src.size()));
@@ -220,6 +224,9 @@ public class ImageProcess {
         Imgproc.cvtColor(resize, hsvImage, 41);
 
         Log.i("---------size--", String.valueOf(hsvImage.size()));
+
+
+        long time1 = System.currentTimeMillis();
 
         double[] distance = redDistance(hsvImage);
 
