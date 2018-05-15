@@ -16,6 +16,7 @@ import com.edu.nju.tree.treemeasure.utils.ImageProcess;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
 import java.io.IOException;
@@ -31,24 +32,24 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//
-//        Button button = (Button)findViewById(R.id.button);
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                tutorial();
-//            }
-//        });
-        //整个项目只有一个activity，启动以后都是activity上fragment之间的切换
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_camera);
-        if (null == savedInstanceState) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, Camera2BasicFragment.newInstance())
-                    .commit();
-        }
+        setContentView(R.layout.activity_main);
+
+        Button button = (Button)findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tutorial();
+            }
+        });
+        //整个项目只有一个activity，启动以后都是activity上fragment之间的切换
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_camera);
+//        if (null == savedInstanceState) {
+//            getSupportFragmentManager().beginTransaction()
+//                    .replace(R.id.container, Camera2BasicFragment.newInstance())
+//                    .commit();
+//        }
 
     }
 
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         InputStream is = null;
         try {
-            is = getAssets().open("56_mark.jpg");
+            is = getAssets().open("tree3.jpg");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Log.i("----------treewidth: ", String.valueOf(treeWidth));
-//
+
 //        Bitmap bmp= null;
 //        bmp =Bitmap.createBitmap( hsvImage.width(),  hsvImage.height(),  Bitmap.Config.ARGB_8888);
 //
