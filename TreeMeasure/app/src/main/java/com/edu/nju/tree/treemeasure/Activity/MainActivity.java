@@ -32,24 +32,24 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Button button = (Button)findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tutorial();
-            }
-        });
-        //整个项目只有一个activity，启动以后都是activity上fragment之间的切换
 //        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_camera);
-//        if (null == savedInstanceState) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.container, Camera2BasicFragment.newInstance())
-//                    .commit();
-//        }
+//        setContentView(R.layout.activity_main);
+//
+//        Button button = (Button)findViewById(R.id.button);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                tutorial();
+//            }
+//        });
+        //整个项目只有一个activity，启动以后都是activity上fragment之间的切换
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_camera);
+        if (null == savedInstanceState) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, Camera2BasicFragment.newInstance())
+                    .commit();
+        }
 
     }
 

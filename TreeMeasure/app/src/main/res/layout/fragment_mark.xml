@@ -21,12 +21,6 @@
                 android:layout_weight="1"
                 android:text="确定"/>
 
-        <Button
-                android:id="@+id/write_pad_clear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="清除"/>
 
         <Button
                 android:id="@+id/write_pad_cancel"

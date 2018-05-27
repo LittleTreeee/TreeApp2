@@ -33,14 +33,10 @@ import java.util.Locale;
 public class MarkPadFragment extends Fragment {
     private Context mContext;
     private ImageView imageView;
-    private Button mBtnOK, mBtnClear, mBtnCancel;
+    private Button mBtnOK,mBtnCancel;
     private byte[] bytes;
-    private Bitmap bitmap;
     private Bitmap photo;
-    private Canvas canvas; //画布
-    private Paint paint; //画笔
     private Matrix matrix; //矩阵，空间变换
-    private float downX = 0, downY=0, upX=0, upY=0; //定义按下和停止位置（x,y）坐标
     private BitmapFactory.Options options;
     private int right = 0;
     private int bottom = 0;
@@ -64,15 +60,9 @@ public class MarkPadFragment extends Fragment {
         }
 
         mContext = getContext();
-
-        paint = new Paint();
-        paint.setColor(Color.BLUE);
-        paint.setStrokeWidth(5);
         matrix = new Matrix();
         matrix.setRotate(90);
         photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
-        bitmap = Bitmap.createBitmap(screenWidth,screenHeight, Bitmap.Config.ARGB_8888);
-        canvas = new Canvas(bitmap);
 
         double widthRatio = screenWidth/(photo.getWidth()+0.0);
         double heightRatio = screenHeight/(photo.getHeight()+0.0);
@@ -87,11 +77,9 @@ public class MarkPadFragment extends Fragment {
             right = photo.getWidth();
             bottom = photo.getHeight();
         }
-        canvas.drawBitmap(photo,null,new Rect(0,0,right,bottom),null);
-        imageView.setImageBitmap(bitmap);
+        imageView.setImageBitmap(photo);
 
         mBtnOK = (Button) view.findViewById(R.id.write_pad_ok);
-        mBtnClear = (Button) view.findViewById(R.id.write_pad_clear);
         mBtnCancel = (Button) view.findViewById(R.id.write_pad_cancel);
 
         mBtnOK.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +90,7 @@ public class MarkPadFragment extends Fragment {
 //                saveImage();
                 Toast.makeText(mContext, "开始计算...", Toast.LENGTH_LONG).show();
 
-                double treeWidth = ImageProcess.treeWidth(bitmap);
+                double treeWidth = ImageProcess.treeWidth(photo);
 
                 BigDecimal bg = new BigDecimal(treeWidth);
                 treeWidth = bg.setScale(2, BigDecimal.ROUND_UP).doubleValue();
@@ -114,20 +102,6 @@ public class MarkPadFragment extends Fragment {
             }
         });
 
-        mBtnClear.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                //todo 清除
-                Paint p = new Paint();
-                //清屏
-                p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-                canvas.drawPaint(p);
-                p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
-                canvas.drawBitmap(photo,null,new Rect(0,0,right,bottom),null);
-                Toast.makeText(mContext, "清除", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         mBtnCancel.setOnClickListener(new View.OnClickListener() {
 
@@ -143,64 +117,9 @@ public class MarkPadFragment extends Fragment {
             }
         });
 
-        view.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                // 判断不同状态
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        // 按下时记下坐标
-                        downX = event.getX();
-                        downY = event.getY();
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        // 移动过程中不断绘制line
-                        upX = event.getX();
-                        upY = event.getY();
-                        canvas.drawLine(downX, downY, upX, upY, paint);
-                        imageView.invalidate();
-                        downX = upX;
-                        downY = upY;
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        // 停止时记录坐标
-                        upX = event.getX();
-                        upY = event.getY();
-                        canvas.drawLine(downX, downY, upX, upY, paint);
-                        imageView.invalidate();
-                        break;
-                    case MotionEvent.ACTION_CANCEL:
-                        break;
-                    default:
-                        break;
-                }
-                //返回true表示，一旦事件开始就要继续接受触摸事件
-                return true;
-            }
-        });
-
         return view;
     }
 
-    /**
-     * @param
-     * @param bitmap 对象
-     * @param w 要缩放的宽度
-     * @param h 要缩放的高度
-     * @return newBmp 新 Bitmap对象
-     */
-    public static Bitmap zoomBitmap(Bitmap bitmap, int w, int h){
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        Matrix matrix = new Matrix();
-        float scaleWidth = ((float) w / width);
-        float scaleHeight = ((float) h / height);
-        matrix.postScale(scaleWidth, scaleHeight);
-        Bitmap newBmp = Bitmap.createBitmap(bitmap, 0, 0, width, height,
-                matrix, true);
-        return newBmp;
-    }
 
     private void saveImage(){
         FileOutputStream output = null;
@@ -219,7 +138,7 @@ public class MarkPadFragment extends Fragment {
 
         try {
             output = new FileOutputStream(mFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
+            photo.compress(Bitmap.CompressFormat.JPEG, 100, output);
             output.flush();
 
         } catch (IOException e) {
@@ -234,34 +153,6 @@ public class MarkPadFragment extends Fragment {
                 }
             }
         }
-    }
-
-    // 计算 BitmapFactpry 的 inSimpleSize的值的方法
-    public int calculateInSampleSize(BitmapFactory.Options options,
-                                     int reqWidth, int reqHeight) {
-        if (reqWidth == 0 || reqHeight == 0) {
-            return 1;
-        }
-
-        // 获取图片原生的宽和高
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        // 如果原生的宽高大于请求的宽高,那么将原生的宽和高都置为原来的一半
-        if (height > reqHeight || width > reqWidth) {
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // 主要计算逻辑
-            // Calculate the largest inSampleSize value that is a power of 2 and
-            // keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-        return inSampleSize;
     }
 
 }
