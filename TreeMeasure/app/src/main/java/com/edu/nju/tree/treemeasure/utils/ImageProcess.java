@@ -1,14 +1,14 @@
 package com.edu.nju.tree.treemeasure.utils;
 
 import android.graphics.Bitmap;
-import android.util.Log;
+
+import com.edu.nju.tree.treemeasure.Error.NoRedPointsException;
+import com.edu.nju.tree.treemeasure.Error.TooMuchRedPointsException;
 
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -20,26 +20,50 @@ import java.util.List;
 
 public class ImageProcess {
 
-    private static final int scope = 20;
+    //在scope范围内算作一致的
+    private static int scope = 50;
 
-    private static int redcolor = 255;
-    private static int bluecolor = 100;
-
-    private static double realDistance = 10.75;
+    private static double realDistance = 10;
 
     /**
-     * 将mat中不同区域缩为一个点，返回
-     * @param mat, 只有（0，0，0）和（255，255，255）两种点，（255，255，255）是感兴趣的，处理的点
-     * @param color
+     * 动态设定实际距离
+     * @param realDistance
+     */
+    public static void setRealDistance(double realDistance) {
+        ImageProcess.realDistance = realDistance;
+    }
+
+    /**
+     * 计算入口
+     * @param bitmap
      * @return
      */
-    private static List<Spot> getPoints(Mat mat, int color){
-        List<TargetArea> areas = new ArrayList<>();
+    public static double treeWidth(Bitmap bitmap){
 
+        Mat src = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
+
+        Utils.bitmapToMat(bitmap, src);
+
+        Mat hsvImage = new Mat(src.rows(), src.cols(), CvType.CV_8UC1, new Scalar(4));
+        Imgproc.cvtColor(src, hsvImage, 41);
+
+        return calculate(hsvImage);
+
+    }
+
+    /**
+     * 实际计算函数
+     * @param mat
+     * @return
+     */
+    private static double calculate(Mat mat){
+        List<TargetArea> areas = new ArrayList<>();
         //把获得的所有点分类
         for ( int i = 0; i<mat.rows(); i++ ){
             for ( int j = 0; j<mat.cols(); j++ ){
-                if ( mat.get(i, j)[0] == color ){
+                //红色点
+                double[] hsv = mat.get(i,j);
+                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 150 && hsv[2] > 200 ){
                     boolean inserted = false;      //是否被放到一个区域中
                     for ( int k = 0; k<areas.size(); k++ ){
                         if ( i <= areas.get(k).maxX+scope && i >= areas.get(k).minX-scope &&
@@ -75,36 +99,13 @@ public class ImageProcess {
             }
         }
 
-        //把区域缩成一个点,红蓝不一样
-        if ( color == bluecolor ){
-            List<TargetArea> blueAreas = new ArrayList<>();
-            int indexs[] = {-1, -1, -1};
-            for ( int i = 0; i<3; i++ ){
-                int maxsize = 0;
-                int index = 0;
-                for ( int j = 0; j<areas.size(); j++ ) {
-                    if (areas.get(j).spots.size() > maxsize && j != indexs[0] && j != indexs[1]) {
-                        maxsize = areas.get(j).spots.size();
-                        index = j;
-                        indexs[i] = j;
-                    }
-                }
-
-                blueAreas.add(areas.get(index));
-
-            }
-
-            areas = blueAreas;
-        }
-
-
-        List<Spot> resultSpots = new ArrayList<>();
+        List<Spot> points = new ArrayList<>();
         for ( int i = 0; i<areas.size(); i++){
 
             List<Spot> spots = areas.get(i).spots;
             int sumx = 0;
             int sumy = 0;
-            if ( spots.size() <= 5 )
+            if ( spots.size() <= 10 )
                 continue;
             for ( int j = 0; j<spots.size(); j++){
                 sumx += spots.get(j).x;
@@ -117,125 +118,98 @@ public class ImageProcess {
             spot.x = meanx;
             spot.y = meany;
 
-            resultSpots.add(spot);
+            points.add(spot);
 
         }
 
-        return resultSpots;
+        // 检查红色的光点是否只有两个
+        if ( points.size() < 2 ){
+            throw new NoRedPointsException();
+        }else if ( points.size() > 2 ){
+            throw new TooMuchRedPointsException();
+        }
 
-    }
+        int bottom = mat.rows();
+        int num = 8;
 
-    /**
-     * 得到两个红点之间的距离
-     * @param hsvImage
-     * @return
-     */
-    public static double[] redDistance(Mat hsvImage){
+        //中间这条线是不应该出现红色点的
+        int center = (points.get(0).x + points.get(1).x)/2;
 
-        double[] distance = new double[2];
-
-        long time1 = System.currentTimeMillis();
-
-        for ( int i = 0; i<hsvImage.rows(); i++ ){
-            for ( int j = 0; j<hsvImage.cols(); j++ ){
-                double H, S, V = 0;
-                H = hsvImage.get(i, j)[0];
-                S = hsvImage.get(i, j)[1];
-                V = hsvImage.get(i, j)[2];
-
-                //红色
-                if ( H>=156 && H<=180 &&  S > 100 && V > 200 ){
-                    hsvImage.put(i, j, 255.0,255.0,255.0);
-                }
-                //蓝色
-                else if ( H>=100 && H<=124 && S>200 && V > 200 ){
-                    hsvImage.put(i, j, 100.0,255.0,255.0);
-                }
-                //其他
-                else{
-                    hsvImage.put(i, j, 0.0,0.0,0.0);
+        int top1_x = 0;
+        int count  = 0;
+        for ( int j = 0; j<mat.cols(); j++ ){
+            for ( int i = 0; i<center; i++ ){
+                double[] hsv = mat.get(i,j);
+                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 100 && hsv[2] > 100 ){
+                    top1_x += j;
+                    count++;
                 }
             }
+            if ( count >= num ){
+                top1_x /= count;
+                break;
+            }
         }
-        long time2 = System.currentTimeMillis();
-        Log.i("*******times", String.valueOf(time2-time1));
 
-
-        // 计算红色点的距离
-        List<Spot> pointRed = getPoints(hsvImage, redcolor);
-        Log.i("-----redpoint ", String.valueOf(pointRed.size()));
-
-        Spot red1 = pointRed.get(0);
-        Spot red2 = pointRed.get(1);
-//        int ROW = hsvImage.rows();
-//        for ( int i = 0; i<pointRed.size(); i++ ){
-//            if ( (pointRed.get(i).x)<(ROW/2) && ((pointRed.get(i).x) > (ROW/2 * 0.8) )){
-//                red1.y = (pointRed.get(i).y);
-//                red1.x = pointRed.get(i).x;
-//            }
-//            if ( (pointRed.get(i).x)>(ROW/2) && (pointRed.get(i).x) < (ROW/2 * 1.2) ){
-//                red2.y = (pointRed.get(i).y);
-//                red2.x = pointRed.get(i).x;
-//            }
-//        }
-        distance[0] = Math.sqrt( (red1.x - red2.x)*(red1.x - red2.x)
-                + (red1.y - red2.y)*(red1.y - red2.y) );
-
-
-        // 蓝色两条线距离
-        List<Spot> pointBlue = getPoints(hsvImage, bluecolor);
-
-        int maxindex = 0;
-        for ( int i = 1; i<3; i++ ){
-            if ( pointBlue.get(i).x > pointBlue.get(maxindex).x )
-                maxindex = i;
+        int top2_x = 0;
+        count  = 0;
+        for ( int j = mat.cols()-1; j>=0; j-- ){
+            for ( int i = 0; i<center; i++ ){
+                double[] hsv = mat.get(i,j);
+                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 100 && hsv[2] > 100 ){
+                    top2_x += j;
+                    count++;
+                }
+            }
+            if ( count >= num ){
+                top2_x /= count;
+                break;
+            }
         }
-        pointBlue.remove(maxindex);
 
-        Spot blue1 = pointBlue.get(0);
-        Spot blue2 = pointBlue.get(1);
+        int bottom1_x = 0;
+        count  = 0;
+        for ( int j = 0; j<mat.cols(); j++ ){
+            //找num个左边的点
+            for ( int i = center; i<bottom; i++ ){
+                double[] hsv = mat.get(i,j);
+                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 100 && hsv[2] > 100 ){
+                    bottom1_x += j;
+                    count++;
+                }
+            }
+            if ( count >= num ){
+                bottom1_x /= count;
+                break;
+            }
+        }
 
-        distance[1] = Math.sqrt( (blue1.x - blue2.x)*(blue1.x - blue2.x)
-                + (blue1.y - blue2.y)*(blue1.y - blue2.y) );
+        int bottom2_x = 0;
+        count  = 0;
+        for ( int j = mat.cols()-1; j>=0; j-- ){
+            //找num个左边的点
+            for ( int i = center; i<bottom; i++ ){
+                double[] hsv = mat.get(i,j);
+                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 100 && hsv[2] > 100 ){
+                    bottom2_x += j;
+                    count++;
+                }
+            }
+            if ( count >= num ){
+                bottom2_x /= count;
+                break;
+            }
+        }
 
+        double treePixel = ( top2_x - top1_x + bottom2_x - bottom1_x )/2;
 
-        return distance;
+        double rPixel = Math.sqrt( (points.get(0).x-points.get(1).x)*(points.get(0).x-points.get(1).x)
+                + (points.get(0).y - points.get(1).y) * (points.get(0).y - points.get(1).y));
 
+        double treelength = (treePixel*1.0 / rPixel) * realDistance;
 
-    }
+        return treelength;
 
-
-    public static double treeWidth(Bitmap bitmap){
-
-        Mat src = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
-
-        Log.i("---------size--", String.valueOf(src.size()));
-
-        Mat hsvImage = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
-        Utils.bitmapToMat(bitmap, src);
-
-        Mat roi = new Mat(src, new Rect(src.cols()/4, 0, src.cols()/2, src.rows()));
-
-        Log.i("---------size--", String.valueOf(roi.size()));
-
-
-        Mat resize = new Mat();
-        Imgproc.resize(roi, resize, new Size(roi.width()/2, roi.height()/2));
-        Imgproc.cvtColor(resize, hsvImage, 41);
-
-        Log.i("---------size--", String.valueOf(hsvImage.size()));
-
-
-        long time1 = System.currentTimeMillis();
-
-        double[] distance = redDistance(hsvImage);
-
-        double treeWidth = distance[1]/distance[0] * realDistance;
-
-        long time2 = System.currentTimeMillis();
-        Log.i("*******times", String.valueOf(time2-time1));
-
-        return treeWidth;
     }
 
 }

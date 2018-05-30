@@ -2,6 +2,7 @@ package com.edu.nju.tree.treemeasure.Activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,12 +17,10 @@ import com.edu.nju.tree.treemeasure.utils.ImageProcess;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -70,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         InputStream is = null;
         try {
-            is = getAssets().open("tree3.jpg");
+            is = getAssets().open("tree8.jpg");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -79,15 +78,27 @@ public class MainActivity extends AppCompatActivity {
         Log.i("---------------", "before image process");
 
 
-        double treeWidth = ImageProcess.treeWidth(bitmap);
+        Bitmap roiMap = Bitmap.createBitmap(bitmap,
+                bitmap.getWidth()/5*2, bitmap.getHeight()/10*3,
+                bitmap.getWidth()/5, bitmap.getHeight()/10*4);
+        Matrix matrix = new Matrix();
+        matrix.setRotate(90);
+        bitmap = Bitmap.createBitmap(roiMap, 0, 0, roiMap.getWidth(), roiMap.getHeight(), matrix, true);
 
+        long time1 = System.currentTimeMillis();
+        double treewidth = ImageProcess.treeWidth(bitmap);
+        long time2 = System.currentTimeMillis();
+        System.out.println("time is " + (time2-time1));
+        System.out.println(treewidth);
 
-        Log.i("----------treewidth: ", String.valueOf(treeWidth));
-
-//        Bitmap bmp= null;
-//        bmp =Bitmap.createBitmap( hsvImage.width(),  hsvImage.height(),  Bitmap.Config.ARGB_8888);
+//        Mat treeWidth = Process.treeWidth(bitmap);
 //
-//        Utils.matToBitmap(hsvImage, bmp);
+//        Log.i("----------treewidth: ", String.valueOf(treeWidth));
+//
+//        Bitmap bmp= null;
+//        bmp =Bitmap.createBitmap( treeWidth.width(),  treeWidth.height(),  Bitmap.Config.ARGB_8888);
+//
+//        Utils.matToBitmap(treeWidth, bmp);
 //
 //        mImageView = (ImageView) findViewById(R.id.image);
 //        mImageView.setImageBitmap(bmp);

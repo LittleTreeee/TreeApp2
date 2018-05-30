@@ -1,2 +1,6 @@
-/OpenCV-android-sdk
-TreeMeasure/openCVLibrary341/
+OpenCV-android-sdk
+TreeMeasure/openCVLibrary341
+TreeMeasure/app/src/main/assets
+.idea
+TreeMeasure/build 
+.DS_STORE
