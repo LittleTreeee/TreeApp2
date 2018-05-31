@@ -921,8 +921,8 @@ public class Camera2BasicFragment extends Fragment
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.picture: {
-                takePicture();
 
+                takePicture();
                 //todo 将获得的图片显示在界面上
                 //这里解释一下，本来是既可以直接就显示在当前的fragment上的，但是想到还要做会退按钮什么的，就直接让相机拍完照就跳转到另一个fragment中了
                 //所以这一段代码没有用了
