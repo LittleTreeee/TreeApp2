@@ -19,7 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="确定"/>
+                android:text="计算"/>
 
 
         <Button
@@ -36,6 +36,7 @@
             android:layout_height="match_parent"
             android:layout_above="@+id/bottom_bar"
     >
+
         <ImageView
                 android:id="@+id/iv"
                 android:layout_width="match_parent"
