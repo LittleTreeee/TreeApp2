@@ -53,6 +53,7 @@ import android.widget.Toast;
 import com.edu.nju.tree.treemeasure.View.AutoFitTextureView;
 import com.edu.nju.tree.treemeasure.R;
 import com.edu.nju.tree.treemeasure.View.LevelView;
+import com.edu.nju.tree.treemeasure.utils.ImageProcess;
 
 import java.io.File;
 import java.nio.ByteBuffer;
@@ -993,14 +994,14 @@ public class Camera2BasicFragment extends Fragment
                 builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //todo 这里是直接调方法吗
-                        Toast.makeText(getActivity(), "你输入的是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
+                        ImageProcess.setRealDistance(Double.parseDouble(edit.getText().toString()));
+                       // Toast.makeText(getActivity(), "你输入的是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getActivity(), "你点了取消", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(getActivity(), "你点了取消", Toast.LENGTH_SHORT).show();
                     }
                 });
 
