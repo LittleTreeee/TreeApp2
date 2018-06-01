@@ -133,11 +133,11 @@ public class MarkPadFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //todo 取消
-//                getActivity().getSupportFragmentManager()
-//                        .beginTransaction()
-//                        .replace(R.id.container, new Camera2BasicFragment(), null)
-//                        .commit();
-                getActivity().getSupportFragmentManager().popBackStack();
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container, Camera2BasicFragment.newInstance(), null)
+                        .commit();
+//                getActivity().getSupportFragmentManager().popBackStack();
                 Toast.makeText(mContext, "取消", Toast.LENGTH_SHORT).show();
             }
         });

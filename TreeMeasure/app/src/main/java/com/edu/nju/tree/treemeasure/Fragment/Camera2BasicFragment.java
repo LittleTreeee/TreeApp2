@@ -41,10 +41,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.text.InputType;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.*;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.edu.nju.tree.treemeasure.View.AutoFitTextureView;
@@ -325,6 +328,12 @@ public class Camera2BasicFragment extends Fragment
                             runPrecaptureSequence();
                         }
                     }
+                    //todo 也不知道有没有用
+                    else{
+
+                        mState = STATE_PICTURE_TAKEN;
+                        captureStillPicture();
+                    }
                     break;
                 }
                 case STATE_WAITING_PRECAPTURE: {
@@ -544,6 +553,9 @@ public class Camera2BasicFragment extends Fragment
                 Size largest = Collections.max(
                         Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
                         new CompareSizesByArea());
+                //todo maxImages表示用户希望同时访问的图像的最大数量，这应该尽可能小，以限制内存使用，一旦用户获得了maxImages图像
+                //todo 它其中的一个必须在{@link #acquireLatestImage()}或者{@link #acquireNextImage()}可以通过或者访问之前释放，必须大于0
+
                 mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(),
                         ImageFormat.JPEG, /*maxImages*/2);
                 mImageReader.setOnImageAvailableListener(
@@ -948,13 +960,55 @@ public class Camera2BasicFragment extends Fragment
                 break;
             }
             case R.id.info: {
+                //todo 这里改成手动设置距离
+//                Activity activity = getActivity();
+//                if (null != activity) {
+//                    new AlertDialog.Builder(activity)
+//                            .setMessage(R.string.intro_message)
+//                            .setPositiveButton(android.R.string.ok, null)
+//                            .show();
+//                }
                 Activity activity = getActivity();
-                if (null != activity) {
-                    new AlertDialog.Builder(activity)
-                            .setMessage(R.string.intro_message)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show();
-                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setTitle("设置两激光点距离");    //设置对话框标题
+//                builder.setIcon(android.R.drawable.btn_star);   //设置对话框标题前的图标
+
+                TextView textView = new TextView(activity);
+                textView.setText("距离(cm):");
+                textView.setTextSize(22);
+
+                final EditText edit = new EditText(activity);
+                edit.setHint("请填写距离");
+                edit.setInputType(InputType.TYPE_CLASS_NUMBER);
+                edit.setWidth(550);
+                edit.setTextSize(18);
+
+                LinearLayout layout = new LinearLayout(activity);
+                layout.setHorizontalGravity(LinearLayout.HORIZONTAL);
+                layout.addView(textView);
+                layout.addView(edit);
+
+                layout.setPadding(100, 0, 100, 20);
+                builder.setView(layout);
+                builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //todo 这里是直接调方法吗
+                        Toast.makeText(getActivity(), "你输入的是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getActivity(), "你点了取消", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                builder.setCancelable(true);    //设置按钮是否可以按返回键取消,false则不可以取消
+                //创建对话框
+                Dialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(true); //设置弹出框失去焦点是否隐藏,即点击屏蔽其它地方是否隐藏
+                dialog.show();
                 break;
             }
         }
@@ -1027,7 +1081,6 @@ public class Camera2BasicFragment extends Fragment
             getActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, markupFragment, null)
-                    .addToBackStack(null)
                     .commit();
         }
     }
