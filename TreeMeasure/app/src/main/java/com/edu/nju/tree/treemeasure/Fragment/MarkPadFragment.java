@@ -114,8 +114,13 @@ public class MarkPadFragment extends Fragment {
 //                saveImage();
                 Toast.makeText(mContext, "开始计算...", Toast.LENGTH_LONG).show();
 
-//                double treeWidth = ImageProcess.treeWidth(photo);
                 double treeWidth = 0;
+                try {
+                    treeWidth = ImageProcess.treeWidth(photo);
+                }catch (RuntimeException e){
+                    Log.i("-------", "没红点 ");
+                }
+//                double treeWidth = 0;
 
                 BigDecimal bg = new BigDecimal(treeWidth);
                 treeWidth = bg.setScale(2, BigDecimal.ROUND_UP).doubleValue();
