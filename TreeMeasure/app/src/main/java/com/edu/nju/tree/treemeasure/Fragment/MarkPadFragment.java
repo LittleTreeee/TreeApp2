@@ -89,6 +89,11 @@ public class MarkPadFragment extends Fragment {
         //修改饱和度
         ColorMatrix colorMatrix = new ColorMatrix();
         colorMatrix.setSaturation(2);
+
+        //亮度
+//        colorMatrix.setScale(0,0,0,1);
+        //色相
+//        colorMatrix.setRotate(0,90);
 //        Bitmap finalBitmap = Bitmap.createBitmap(photo, photo.getWidth()/5*2, photo.getHeight()/10*3,
 //                photo.getWidth()/5, photo.getHeight()/10*4);
         Bitmap finalBitmap = Bitmap.createBitmap(photo,
