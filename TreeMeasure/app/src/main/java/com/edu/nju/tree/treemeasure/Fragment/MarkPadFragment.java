@@ -91,7 +91,7 @@ public class MarkPadFragment extends Fragment {
         colorMatrix.setSaturation(2);
 //        Bitmap finalBitmap = Bitmap.createBitmap(photo, photo.getWidth()/5*2, photo.getHeight()/10*3,
 //                photo.getWidth()/5, photo.getHeight()/10*4);
-        Bitmap finalBitmap = Bitmap.createBitmap(photo,
+        final Bitmap finalBitmap = Bitmap.createBitmap(photo,
                 photo.getWidth()/10*3, photo.getHeight()/5*2,
                 photo.getWidth()/10*4, photo.getHeight()/5);
         Canvas canvas = new Canvas(finalBitmap);
@@ -116,11 +116,10 @@ public class MarkPadFragment extends Fragment {
 
                 double treeWidth = 0;
                 try {
-                    treeWidth = ImageProcess.treeWidth(photo);
+                    treeWidth = ImageProcess.treeWidth(finalBitmap);
                 }catch (RuntimeException e){
                     Log.i("-------", "没红点 ");
                 }
-//                double treeWidth = 0;
 
                 BigDecimal bg = new BigDecimal(treeWidth);
                 treeWidth = bg.setScale(2, BigDecimal.ROUND_UP).doubleValue();

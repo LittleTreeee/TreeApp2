@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         InputStream is = null;
         try {
-            is = getAssets().open("tree8.jpg");
+            is = getAssets().open("tree1.jpg");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -77,13 +77,14 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i("---------------", "before image process");
 
+//
+//        Bitmap roiMap = Bitmap.createBitmap(bitmap,
+//                bitmap.getWidth()/5*2, bitmap.getHeight()/10*3,
+//                bitmap.getWidth()/5, bitmap.getHeight()/10*4);
 
-        Bitmap roiMap = Bitmap.createBitmap(bitmap,
-                bitmap.getWidth()/5*2, bitmap.getHeight()/10*3,
-                bitmap.getWidth()/5, bitmap.getHeight()/10*4);
-        Matrix matrix = new Matrix();
-        matrix.setRotate(90);
-        bitmap = Bitmap.createBitmap(roiMap, 0, 0, roiMap.getWidth(), roiMap.getHeight(), matrix, true);
+//        Matrix matrix = new Matrix();
+//        matrix.setRotate(90);
+//        bitmap = Bitmap.createBitmap(roiMap, 0, 0, roiMap.getWidth(), roiMap.getHeight(), matrix, true);
 
         long time1 = System.currentTimeMillis();
         double treewidth = ImageProcess.treeWidth(bitmap);
