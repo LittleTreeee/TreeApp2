@@ -99,7 +99,7 @@ public class MarkPadFragment extends Fragment {
         paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
         canvas.drawBitmap(finalBitmap, 0,0, paint);
 //        imageView.setImageBitmap(photo);
-        //todo 这里的finalBitmap是最后改完饱和度的图片
+        //todo 这里的finalBitmanp是最后改完饱和度的图片
         imageView.setImageBitmap(finalBitmap);
 
 
@@ -111,7 +111,7 @@ public class MarkPadFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //todo 保存
-//                saveImage();
+//                saveImage(finalBitmap);
                 Toast.makeText(mContext, "开始计算...", Toast.LENGTH_LONG).show();
 
                 double treeWidth = 0;
@@ -126,7 +126,7 @@ public class MarkPadFragment extends Fragment {
 
 
                 Toast.makeText(mContext, "胸径: "+ treeWidth, Toast.LENGTH_LONG).show();
-                
+//
 
             }
         });
@@ -150,7 +150,7 @@ public class MarkPadFragment extends Fragment {
     }
 
 
-    private void saveImage(){
+    private void saveImage(Bitmap bitmap){
         FileOutputStream output = null;
 
         SimpleDateFormat sdf = new SimpleDateFormat(
@@ -167,7 +167,7 @@ public class MarkPadFragment extends Fragment {
 
         try {
             output = new FileOutputStream(mFile);
-            photo.compress(Bitmap.CompressFormat.JPEG, 100, output);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
             output.flush();
 
         } catch (IOException e) {
@@ -177,6 +177,7 @@ public class MarkPadFragment extends Fragment {
             if (null != output) {
                 try {
                     output.close();
+                    Log.d("outputSuccess", mFile.toString());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
