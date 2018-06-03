@@ -4,11 +4,13 @@ import android.graphics.Bitmap;
 
 import com.edu.nju.tree.treemeasure.Error.NoRedPointsException;
 import com.edu.nju.tree.treemeasure.Error.TooMuchRedPointsException;
+import com.edu.nju.tree.treemeasure.Error.WrongSizeImage;
 
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ import java.util.List;
 public class ImageProcess {
 
     //在scope范围内算作一致的
-    private static int scope = 50;
+    private static int scope = 30;
 
     private static double realDistance = 10;
 
@@ -44,6 +46,8 @@ public class ImageProcess {
 
         Utils.bitmapToMat(bitmap, src);
 
+        Imgproc.GaussianBlur( src, src, new Size(5,5), 0,0);
+
         Mat hsvImage = new Mat(src.rows(), src.cols(), CvType.CV_8UC1, new Scalar(4));
         Imgproc.cvtColor(src, hsvImage, 41);
 
@@ -57,13 +61,19 @@ public class ImageProcess {
      * @return
      */
     private static double calculate(Mat mat){
+
+        if ( mat.cols() != 1200 || mat.rows() != 800 ){
+            System.out.println(mat.cols() + "  "+ mat.rows());
+            throw  new WrongSizeImage();
+        }
+
         List<TargetArea> areas = new ArrayList<>();
         //把获得的所有点分类
-        for ( int i = 0; i<mat.rows(); i++ ){
-            for ( int j = 0; j<mat.cols(); j++ ){
+        for ( int i = 300; i<600; i++ ){
+            for ( int j = 350; j<850; j++ ){
                 //红色点
                 double[] hsv = mat.get(i,j);
-                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 150 && hsv[2] > 200 ){
+                if ( hsv[1] < 70 && hsv[2] > 240 ){
                     boolean inserted = false;      //是否被放到一个区域中
                     for ( int k = 0; k<areas.size(); k++ ){
                         if ( i <= areas.get(k).maxX+scope && i >= areas.get(k).minX-scope &&
@@ -130,9 +140,8 @@ public class ImageProcess {
         }
 
         int bottom = mat.rows();
-        int num = 8;
+        int num = 8;        //取8个点平均值
 
-        //中间这条线是不应该出现红色点的
         int center = (points.get(0).x + points.get(1).x)/2;
 
         int top1_x = 0;
@@ -140,7 +149,7 @@ public class ImageProcess {
         for ( int j = 0; j<mat.cols(); j++ ){
             for ( int i = 0; i<center; i++ ){
                 double[] hsv = mat.get(i,j);
-                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 100 && hsv[2] > 100 ){
+                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 80 && hsv[2] > 80 ){
                     top1_x += j;
                     count++;
                 }
@@ -156,7 +165,7 @@ public class ImageProcess {
         for ( int j = mat.cols()-1; j>=0; j-- ){
             for ( int i = 0; i<center; i++ ){
                 double[] hsv = mat.get(i,j);
-                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 100 && hsv[2] > 100 ){
+                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 80 && hsv[2] > 80 ){
                     top2_x += j;
                     count++;
                 }
@@ -173,7 +182,7 @@ public class ImageProcess {
             //找num个左边的点
             for ( int i = center; i<bottom; i++ ){
                 double[] hsv = mat.get(i,j);
-                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 100 && hsv[2] > 100 ){
+                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 80 && hsv[2] > 80 ){
                     bottom1_x += j;
                     count++;
                 }
@@ -190,7 +199,7 @@ public class ImageProcess {
             //找num个左边的点
             for ( int i = center; i<bottom; i++ ){
                 double[] hsv = mat.get(i,j);
-                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 100 && hsv[2] > 100 ){
+                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 80 && hsv[2] > 80 ){
                     bottom2_x += j;
                     count++;
                 }

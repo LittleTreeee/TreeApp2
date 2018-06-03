@@ -132,7 +132,6 @@ public class MarkPadFragment extends Fragment {
                 }catch (RuntimeException e){
                     Log.i("-------", "没红点 ");
                 }
-//                double treeWidth = 0;
 
                 BigDecimal bg = new BigDecimal(treeWidth);
                 treeWidth = bg.setScale(2, BigDecimal.ROUND_UP).doubleValue();
