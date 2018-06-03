@@ -25,7 +25,7 @@ public class ImageProcess {
     //在scope范围内算作一致的
     private static int scope = 30;
 
-    private static double realDistance = 10;
+    private static double realDistance = 9.15;
 
     /**
      * 动态设定实际距离
@@ -40,11 +40,12 @@ public class ImageProcess {
      * @param bitmap
      * @return
      */
-    public static double treeWidth(Bitmap bitmap){
+    public static double treeWidth(Bitmap bitmap) throws RuntimeException{
 
         Mat src = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
 
         Utils.bitmapToMat(bitmap, src);
+        System.out.println("src   "+ src.rows() + "  "+ src.cols());
 
         Imgproc.GaussianBlur( src, src, new Size(5,5), 0,0);
 
@@ -60,17 +61,16 @@ public class ImageProcess {
      * @param mat
      * @return
      */
-    private static double calculate(Mat mat){
+    private static double calculate(Mat mat) throws RuntimeException{
 
-        if ( mat.cols() != 1200 || mat.rows() != 800 ){
-            System.out.println(mat.cols() + "  "+ mat.rows());
+        if ( mat.rows() != 400 || mat.cols() != 720  ){
             throw  new WrongSizeImage();
         }
 
         List<TargetArea> areas = new ArrayList<>();
         //把获得的所有点分类
-        for ( int i = 300; i<600; i++ ){
-            for ( int j = 350; j<850; j++ ){
+        for ( int j = 100; j<620; j++ ){
+            for ( int i = 100; i<300; i++ ){
                 //红色点
                 double[] hsv = mat.get(i,j);
                 if ( hsv[1] < 70 && hsv[2] > 240 ){
@@ -109,6 +109,9 @@ public class ImageProcess {
             }
         }
 
+        System.out.println("areas size "+ areas.size());
+
+
         List<Spot> points = new ArrayList<>();
         for ( int i = 0; i<areas.size(); i++){
 
@@ -132,88 +135,70 @@ public class ImageProcess {
 
         }
 
-        // 检查红色的光点是否只有两个
-        if ( points.size() < 2 ){
+        if ( points.size() < 2 )
             throw new NoRedPointsException();
-        }else if ( points.size() > 2 ){
-            throw new TooMuchRedPointsException();
-        }
 
-        int bottom = mat.rows();
-        int num = 8;        //取8个点平均值
-
-        int center = (points.get(0).x + points.get(1).x)/2;
-
-        int top1_x = 0;
-        int count  = 0;
-        for ( int j = 0; j<mat.cols(); j++ ){
-            for ( int i = 0; i<center; i++ ){
-                double[] hsv = mat.get(i,j);
-                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 80 && hsv[2] > 80 ){
-                    top1_x += j;
-                    count++;
+        //找左右两个点
+        Spot leftPoint = points.get(0);
+        Spot rightPoint = points.get(points.size()-1);
+        if ( points.size() > 2 ){
+            int center = mat.cols()/2;
+            for ( int i = 1; i < points.size()-1; i++ ){
+                if ( points.get(i).y < center ){
+                    leftPoint = leftPoint.y > points.get(i).y? leftPoint:points.get(i);
+                }
+                if ( points.get(i).y > center ){
+                    rightPoint = rightPoint.y > points.get(i).y? rightPoint:points.get(i);
                 }
             }
-            if ( count >= num ){
-                top1_x /= count;
+        }
+
+        int top1_x = 0;
+        for ( int j = leftPoint.y-1; j > 0; j-=2 ){
+            int count  = 0;
+
+            for ( int i = 0; i<mat.rows(); i++ ){
+                double[] hsv = mat.get(i,j);
+                double[] hsv2 = mat.get(i, j-1);
+                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 80 && hsv[2] > 80
+                        || hsv2[0] >= 156 && hsv2[0] <= 180 && hsv2[1] > 80 && hsv2[2] > 80 ){
+                    count++;
+                    break;
+                }
+            }
+
+            if ( count == 0 ) {
+                top1_x = j;
                 break;
             }
+
         }
 
         int top2_x = 0;
-        count  = 0;
-        for ( int j = mat.cols()-1; j>=0; j-- ){
-            for ( int i = 0; i<center; i++ ){
+        for ( int j = rightPoint.y+1; j < mat.cols(); j+=2 ){
+            int count  = 0;
+
+            for ( int i = 0; i<mat.rows(); i++ ){
                 double[] hsv = mat.get(i,j);
-                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 80 && hsv[2] > 80 ){
-                    top2_x += j;
+                double[] hsv2 = mat.get(i, j+1);
+                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 80 && hsv[2] > 80
+                        || hsv2[0] >= 156 && hsv2[0] <= 180 && hsv2[1] > 80 && hsv2[2] > 80 ){
                     count++;
+                    break;
                 }
             }
-            if ( count >= num ){
-                top2_x /= count;
+
+            if ( count == 0 ) {
+                top2_x = j;
                 break;
             }
+
         }
 
-        int bottom1_x = 0;
-        count  = 0;
-        for ( int j = 0; j<mat.cols(); j++ ){
-            //找num个左边的点
-            for ( int i = center; i<bottom; i++ ){
-                double[] hsv = mat.get(i,j);
-                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 80 && hsv[2] > 80 ){
-                    bottom1_x += j;
-                    count++;
-                }
-            }
-            if ( count >= num ){
-                bottom1_x /= count;
-                break;
-            }
-        }
 
-        int bottom2_x = 0;
-        count  = 0;
-        for ( int j = mat.cols()-1; j>=0; j-- ){
-            //找num个左边的点
-            for ( int i = center; i<bottom; i++ ){
-                double[] hsv = mat.get(i,j);
-                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 80 && hsv[2] > 80 ){
-                    bottom2_x += j;
-                    count++;
-                }
-            }
-            if ( count >= num ){
-                bottom2_x /= count;
-                break;
-            }
-        }
+        double treePixel = top2_x - top1_x;
 
-        double treePixel = ( top2_x - top1_x + bottom2_x - bottom1_x )/2;
-
-        double rPixel = Math.sqrt( (points.get(0).x-points.get(1).x)*(points.get(0).x-points.get(1).x)
-                + (points.get(0).y - points.get(1).y) * (points.get(0).y - points.get(1).y));
+        double rPixel = rightPoint.y - leftPoint.y;
 
         double treelength = (treePixel*1.0 / rPixel) * realDistance;
 

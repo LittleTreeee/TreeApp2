@@ -67,15 +67,64 @@ public class MainActivity extends AppCompatActivity {
 
     public void tutorial(){
 
+        Log.i("---------------", "before image process");
+
         InputStream is = null;
         try {
+
             is = getAssets().open("tree1.jpg");
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            bitmap = Bitmap.createBitmap(bitmap,
+                bitmap.getWidth()/5, bitmap.getHeight()/4+50,
+                bitmap.getWidth()/5*3, bitmap.getHeight()/2);
+            System.out.println(bitmap.getWidth() + "  "+ bitmap.getHeight());
+            double treewidth = ImageProcess.treeWidth(bitmap);
+            System.out.println("1   " + treewidth);
+
+            is = getAssets().open("tree2.jpg");
+            bitmap = BitmapFactory.decodeStream(is);
+            bitmap = Bitmap.createBitmap(bitmap,
+                    bitmap.getWidth()/5, bitmap.getHeight()/4+50,
+                    bitmap.getWidth()/5*3, bitmap.getHeight()/2);
+            treewidth = ImageProcess.treeWidth(bitmap);
+            System.out.println("2   " + treewidth);
+
+            is = getAssets().open("tree3.jpg");
+            bitmap = BitmapFactory.decodeStream(is);
+            bitmap = Bitmap.createBitmap(bitmap,
+                    bitmap.getWidth()/5, bitmap.getHeight()/4+50,
+                    bitmap.getWidth()/5*3, bitmap.getHeight()/2);
+            treewidth = ImageProcess.treeWidth(bitmap);
+            System.out.println("3   " + treewidth);
+
+            is = getAssets().open("tree4.jpg");
+            bitmap = BitmapFactory.decodeStream(is);
+            bitmap = Bitmap.createBitmap(bitmap,
+                    bitmap.getWidth()/5, bitmap.getHeight()/4+50,
+                    bitmap.getWidth()/5*3, bitmap.getHeight()/2);
+            treewidth = ImageProcess.treeWidth(bitmap);
+            System.out.println("4   " + treewidth);
+
+            is = getAssets().open("tree5.jpg");
+            bitmap = BitmapFactory.decodeStream(is);
+            bitmap = Bitmap.createBitmap(bitmap,
+                    bitmap.getWidth()/5, bitmap.getHeight()/4+50,
+                    bitmap.getWidth()/5*3, bitmap.getHeight()/2);
+            treewidth = ImageProcess.treeWidth(bitmap);
+            System.out.println("5   " + treewidth);
+
+            is = getAssets().open("tree6.jpg");
+            bitmap = BitmapFactory.decodeStream(is);
+            bitmap = Bitmap.createBitmap(bitmap,
+                    bitmap.getWidth()/5, bitmap.getHeight()/4+50,
+                    bitmap.getWidth()/5*3, bitmap.getHeight()/2);
+            treewidth = ImageProcess.treeWidth(bitmap);
+            System.out.println("6   " + treewidth);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Bitmap bitmap = BitmapFactory.decodeStream(is);
 
-        Log.i("---------------", "before image process");
 
 //
 //        Bitmap roiMap = Bitmap.createBitmap(bitmap,
@@ -86,11 +135,8 @@ public class MainActivity extends AppCompatActivity {
 //        matrix.setRotate(90);
 //        bitmap = Bitmap.createBitmap(roiMap, 0, 0, roiMap.getWidth(), roiMap.getHeight(), matrix, true);
 
-        long time1 = System.currentTimeMillis();
-        double treewidth = ImageProcess.treeWidth(bitmap);
-        long time2 = System.currentTimeMillis();
-        System.out.println("time is " + (time2-time1));
-        System.out.println(treewidth);
+
+
 
 //        Mat treeWidth = Process.treeWidth(bitmap);
 //
