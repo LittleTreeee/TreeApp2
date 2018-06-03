@@ -850,6 +850,7 @@ public class Camera2BasicFragment extends Fragment
         }
     }
 
+
     /**
      * Capture a still picture. This method should be called when we get a response in
      * {@link #mCaptureCallback} from both {@link #lockFocus()}.
