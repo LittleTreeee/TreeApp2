@@ -89,6 +89,13 @@ public class MarkPadFragment extends Fragment {
         //修改饱和度
         ColorMatrix colorMatrix = new ColorMatrix();
         colorMatrix.setSaturation(2);
+//        colorMatrix.setScale(0.5f,0.5f,0.5f,1);
+//        ColorMatrix colorMatrix = new ColorMatrix(new float[]{
+//                1.438f, -0.122f, -0.016f, 0, -0.03f,
+//                -0.062f, 1.378f, -0.016f, 0, 0.05f,
+//                -0.062f, -0.122f, 1.438f, 0, -0.02f,
+//                0, 0, 0, 1, 0,
+//        });
 //        Bitmap finalBitmap = Bitmap.createBitmap(photo, photo.getWidth()/5*2, photo.getHeight()/10*3,
 //                photo.getWidth()/5, photo.getHeight()/10*4);
         final Bitmap finalBitmap = Bitmap.createBitmap(photo,
@@ -111,7 +118,12 @@ public class MarkPadFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //todo 保存
-//                saveImage(finalBitmap);
+                saveImage(finalBitmap);
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 Toast.makeText(mContext, "开始计算...", Toast.LENGTH_LONG).show();
 
                 double treeWidth = 0;
