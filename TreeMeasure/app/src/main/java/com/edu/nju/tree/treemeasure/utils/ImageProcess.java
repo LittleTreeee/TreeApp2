@@ -25,7 +25,15 @@ public class ImageProcess {
     //在scope范围内算作一致的
     private static int scope = 30;
 
-    private static double realDistance = 9.15;
+    private static double realDistance = 9.75;
+
+    // debug image
+    private static Bitmap bitmap;
+    public static Bitmap getBitMap() {
+        return bitmap;
+    }
+
+    private static boolean debug = true;
 
     /**
      * 动态设定实际距离
@@ -45,7 +53,6 @@ public class ImageProcess {
         Mat src = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1,new Scalar(4));
 
         Utils.bitmapToMat(bitmap, src);
-        System.out.println("src   "+ src.rows() + "  "+ src.cols());
 
         Imgproc.GaussianBlur( src, src, new Size(5,5), 0,0);
 
@@ -63,14 +70,14 @@ public class ImageProcess {
      */
     private static double calculate(Mat mat) throws RuntimeException{
 
-        if ( mat.rows() != 400 || mat.cols() != 720  ){
+        if ( mat.rows() != 800 || mat.cols() != 1500  ){
             throw  new WrongSizeImage();
         }
 
         List<TargetArea> areas = new ArrayList<>();
         //把获得的所有点分类
-        for ( int j = 100; j<620; j++ ){
-            for ( int i = 100; i<300; i++ ){
+        for ( int j = 500; j<1000; j++ ){
+            for ( int i = 300; i<500; i++ ){
                 //红色点
                 double[] hsv = mat.get(i,j);
                 if ( hsv[1] < 70 && hsv[2] > 240 ){
@@ -148,20 +155,31 @@ public class ImageProcess {
                     leftPoint = leftPoint.y > points.get(i).y? leftPoint:points.get(i);
                 }
                 if ( points.get(i).y > center ){
-                    rightPoint = rightPoint.y > points.get(i).y? rightPoint:points.get(i);
+                    rightPoint = rightPoint.y < points.get(i).y? rightPoint:points.get(i);
                 }
             }
         }
+
+        // debug image
+        //
+        if ( debug )
+            for ( int i = 0; i<mat.rows(); i++) {
+                mat.put(i,leftPoint.y, 100,255,100);
+                mat.put(i,rightPoint.y, 100,255,100);
+            }
+
+        int starti = (leftPoint.x+rightPoint.x)/2 - 50;
+        int endi = starti+100;
 
         int top1_x = 0;
         for ( int j = leftPoint.y-1; j > 0; j-=2 ){
             int count  = 0;
 
-            for ( int i = 0; i<mat.rows(); i++ ){
+            for ( int i = starti; i<endi; i++ ){
                 double[] hsv = mat.get(i,j);
                 double[] hsv2 = mat.get(i, j-1);
-                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 80 && hsv[2] > 80
-                        || hsv2[0] >= 156 && hsv2[0] <= 180 && hsv2[1] > 80 && hsv2[2] > 80 ){
+                if ( ( (hsv[0] >= 156 && hsv[0] <= 180) || hsv[0] < 10 ) && hsv[1] > 80 && hsv[2] > 80
+                        || ( (hsv2[0] >= 156 && hsv2[0] <= 180) || hsv2[0] < 10 ) && hsv2[1] > 80 && hsv2[2] > 80 ){
                     count++;
                     break;
                 }
@@ -169,6 +187,11 @@ public class ImageProcess {
 
             if ( count == 0 ) {
                 top1_x = j;
+                //
+                if ( debug )
+                    for ( int i = 0; i<mat.rows(); i++) {
+                        mat.put(i,j, 100,255,100);
+                    }
                 break;
             }
 
@@ -178,11 +201,11 @@ public class ImageProcess {
         for ( int j = rightPoint.y+1; j < mat.cols(); j+=2 ){
             int count  = 0;
 
-            for ( int i = 0; i<mat.rows(); i++ ){
+            for ( int i = starti; i<endi; i++ ){
                 double[] hsv = mat.get(i,j);
                 double[] hsv2 = mat.get(i, j+1);
-                if ( hsv[0] >= 156 && hsv[0] <= 180 && hsv[1] > 80 && hsv[2] > 80
-                        || hsv2[0] >= 156 && hsv2[0] <= 180 && hsv2[1] > 80 && hsv2[2] > 80 ){
+                if ( ( (hsv[0] >= 156 && hsv[0] <= 180) || hsv[0] < 10 )  && hsv[1] > 80 && hsv[2] > 80
+                        || ( (hsv2[0] >= 156 && hsv2[0] <= 180) || hsv2[0] < 10 ) && hsv2[1] > 80 && hsv2[2] > 80 ){
                     count++;
                     break;
                 }
@@ -190,17 +213,25 @@ public class ImageProcess {
 
             if ( count == 0 ) {
                 top2_x = j;
+                //
+                if ( debug )
+                    for ( int i = 0; i<mat.rows(); i++) {
+                        mat.put(i,j, 100,255,100);
+                    }
                 break;
             }
 
         }
 
+        // debug image
+        if ( debug )
+            Utils.matToBitmap(mat, bitmap);
 
         double treePixel = top2_x - top1_x;
 
         double rPixel = rightPoint.y - leftPoint.y;
 
-        double treelength = (treePixel*1.0 / rPixel) * realDistance;
+        double treelength = (treePixel*1.0 / rPixel) * realDistance * 1.02;
 
         return treelength;
 

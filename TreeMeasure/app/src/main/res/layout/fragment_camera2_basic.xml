@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?><!--
  Copyright 2014 The Android Open Source Project
-
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
-
      http://www.apache.org/licenses/LICENSE-2.0
-
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,8 +11,8 @@
  limitations under the License.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
 
     <com.edu.nju.tree.treemeasure.View.AutoFitTextureView
@@ -30,26 +27,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+
     <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="192dp"
-            android:layout_marginBottom="362dp"
-            android:layout_marginLeft="324px"
-            android:layout_marginRight="324px"
+            android:layout_width="540px"
+            android:layout_height="250px"
+            android:layout_marginTop="600px"
+            android:layout_centerHorizontal="true"
             android:text="请在虚线框内拍摄"
             android:textSize="14sp"
             android:textColor="@android:color/white"
             android:background="@drawable/bg_rectangle_with_stroke_dash" />
 
-
     <FrameLayout
-        android:id="@+id/control"
-        android:layout_width="match_parent"
-        android:layout_height="110dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:background="#000000">
+            android:id="@+id/control"
+            android:layout_width="match_parent"
+            android:layout_height="260px"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:background="#000000">
 
         <TextView
                 android:id="@+id/degree"
@@ -61,22 +56,22 @@
 
 
         <Button
-            android:id="@+id/picture"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_gravity="center"
-            android:background="@drawable/ic_btn_camera"
+                android:id="@+id/picture"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_btn_camera"
         />
 
         <ImageButton
-            android:id="@+id/info"
-            android:contentDescription="@string/description_info"
-            style="@android:style/Widget.Material.Light.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|right"
-            android:padding="20dp"
-            android:src="@drawable/ic_action_info" />
+                android:id="@+id/info"
+                android:contentDescription="@string/description_info"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|right"
+                android:padding="20dp"
+                android:src="@drawable/ic_action_info" />
 
     </FrameLayout>
 

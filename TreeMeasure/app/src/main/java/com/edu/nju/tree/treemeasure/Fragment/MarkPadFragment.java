@@ -1,5 +1,6 @@
 package com.edu.nju.tree.treemeasure.Fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.*;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ import java.util.Locale;
 public class MarkPadFragment extends Fragment {
     private Context mContext;
     private ImageView imageView;
+    private ImageView debugView;        // 显示处理过的图片
     private Button mBtnOK,mBtnCancel;
     private byte[] bytes;
     private Bitmap photo;
@@ -54,12 +56,13 @@ public class MarkPadFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mark, null);
         imageView = view.findViewById(R.id.iv);
+        debugView = view.findViewById(R.id.debugImage);
+        mBtnOK = (Button) view.findViewById(R.id.write_pad_ok);
+        mBtnCancel = (Button) view.findViewById(R.id.write_pad_cancel);
 
         // 获取屏幕尺寸
         DisplayMetrics mDisplayMetrics = new DisplayMetrics();
         getActivity().getWindow().getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);
-        int screenWidth = mDisplayMetrics.widthPixels;
-        int screenHeight = mDisplayMetrics.heightPixels;
 
         //之前Camera2BasicFragment传过来的图片
         bytes = (byte[])getArguments().get("bytes");
@@ -73,70 +76,44 @@ public class MarkPadFragment extends Fragment {
         matrix.setRotate(90);
         photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 
-//        double widthRatio = screenWidth/(photo.getWidth()+0.0);
-//        double heightRatio = screenHeight/(photo.getHeight()+0.0);
-//        double photoRatio = photo.getWidth()/(photo.getHeight()+0.0);
-//        if(widthRatio<heightRatio && widthRatio<1){
-//            right = screenWidth;
-//            bottom = (int)(screenHeight*photoRatio);
-//        }else if(heightRatio<widthRatio && heightRatio<1){
-//            right = (int)(screenWidth/heightRatio);
-//            bottom = screenHeight;
-//        }else{
-//            right = photo.getWidth();
-//            bottom = photo.getHeight();
-//        }
-        //修改饱和度
-        ColorMatrix colorMatrix = new ColorMatrix();
-        colorMatrix.setSaturation(2);
-
-        final Bitmap finalBitmap = Bitmap.createBitmap(photo, 1140, 1850 , 720, 400);
-//        colorMatrix.setScale(0.5f,0.5f,0.5f,1);
-//        ColorMatrix colorMatrix = new ColorMatrix(new float[]{
-//                1.438f, -0.122f, -0.016f, 0, -0.03f,
-//                -0.062f, 1.378f, -0.016f, 0, 0.05f,
-//                -0.062f, -0.122f, 1.438f, 0, -0.02f,
-//                0, 0, 0, 1, 0,
-//        });
-
-        Canvas canvas = new Canvas(finalBitmap);
-        Paint paint = new Paint();
-        paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
-        canvas.drawBitmap(finalBitmap, 0,0, paint);
-//        imageView.setImageBitmap(photo);
-        //todo 这里的finalBitmanp是最后改完饱和度的图片
+        // 显示的图片
+        final Bitmap finalBitmap = Bitmap.createBitmap(photo, 750, 1700 , 1500, 800);
         imageView.setImageBitmap(finalBitmap);
 
-
-        mBtnOK = (Button) view.findViewById(R.id.write_pad_ok);
-        mBtnCancel = (Button) view.findViewById(R.id.write_pad_cancel);
 
         mBtnOK.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                //todo 保存
-                saveImage(finalBitmap);
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(mContext, "开始计算...", Toast.LENGTH_LONG).show();
+//                //todo 保存
+//                saveImage(finalBitmap);
+//                try {
+//                    Thread.sleep(2000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                Toast.makeText(mContext, "开始计算...", Toast.LENGTH_LONG).show();
 
                 double treeWidth = 0;
+                long time1 = System.currentTimeMillis();
                 try {
                     treeWidth = ImageProcess.treeWidth(finalBitmap);
                 }catch (RuntimeException e){
                     Log.i("-------", "没红点 ");
                 }
+                long time2 = System.currentTimeMillis();
+
+                // 显示处理过的图片
+                debugView.setImageBitmap(ImageProcess.getBitMap());
 
                 BigDecimal bg = new BigDecimal(treeWidth);
                 treeWidth = bg.setScale(2, BigDecimal.ROUND_UP).doubleValue();
 
+                new AlertDialog.Builder(mContext).setTitle("计算结果")
+                        .setMessage("胸径： "+treeWidth + "  "+ "时间： "+(time2-time1) )
+                        .setPositiveButton("确定",null)
+                        .show();
 
-                Toast.makeText(mContext, "胸径: "+ treeWidth, Toast.LENGTH_LONG).show();
-//
 
             }
         });
