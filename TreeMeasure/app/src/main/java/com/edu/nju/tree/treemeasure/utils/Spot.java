@@ -5,14 +5,16 @@ package com.edu.nju.tree.treemeasure.utils;
  */
 
 public class Spot {
-    int x;
-    int y;
+    int x = 0;
+    int y = 0;
+    int nums = 0;
 
     public Spot() {
     }
 
-    public Spot(int x, int y) {
+    public Spot(int x, int y, int nums) {
         this.x = x;
         this.y = y;
+        this.nums = nums;
     }
 }

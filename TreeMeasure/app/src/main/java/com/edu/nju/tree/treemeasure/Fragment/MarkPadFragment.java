@@ -18,10 +18,13 @@ import android.widget.Toast;
 import com.edu.nju.tree.treemeasure.R;
 import com.edu.nju.tree.treemeasure.utils.ImageProcess;
 
+import org.opencv.android.Utils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.security.spec.ECField;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -35,6 +38,7 @@ public class MarkPadFragment extends Fragment {
     private Context mContext;
     private ImageView imageView;
     private ImageView debugView;        // 显示处理过的图片
+    private ImageView debugView2;        // 显示处理过的图片
     private Button mBtnOK,mBtnCancel;
     private byte[] bytes;
     private Bitmap photo;
@@ -59,6 +63,7 @@ public class MarkPadFragment extends Fragment {
         debugView = view.findViewById(R.id.debugImage);
         mBtnOK = (Button) view.findViewById(R.id.write_pad_ok);
         mBtnCancel = (Button) view.findViewById(R.id.write_pad_cancel);
+        debugView2 = view.findViewById(R.id.debugImage2);
 
         // 获取屏幕尺寸
         DisplayMetrics mDisplayMetrics = new DisplayMetrics();
@@ -80,7 +85,6 @@ public class MarkPadFragment extends Fragment {
         final Bitmap finalBitmap = Bitmap.createBitmap(photo, 750, 1700 , 1500, 800);
         imageView.setImageBitmap(finalBitmap);
 
-
         mBtnOK.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -96,15 +100,30 @@ public class MarkPadFragment extends Fragment {
 
                 double treeWidth = 0;
                 long time1 = System.currentTimeMillis();
+                Bitmap copy1 = finalBitmap.copy(finalBitmap.getConfig(), true);
+                Bitmap copy2 = finalBitmap.copy(finalBitmap.getConfig(), true);
+                Bitmap copy2_re = Bitmap.createBitmap(copy2, 0, 300, copy2.getWidth(), 200);
+
+
                 try {
                     treeWidth = ImageProcess.treeWidth(finalBitmap);
                 }catch (RuntimeException e){
-                    Log.i("-------", "没红点 ");
+                    new AlertDialog.Builder(mContext).setTitle("treewidth "+e.getMessage()).setPositiveButton("确定",null).show();
                 }
-                long time2 = System.currentTimeMillis();
+
+                try{
+                    Utils.matToBitmap(ImageProcess.getMat(copy1), copy1);
+                    debugView.setImageBitmap(copy1);
+                }catch (RuntimeException e){
+                    new AlertDialog.Builder(mContext).setTitle("Mat1 " + e.getMessage()).setPositiveButton("确定",null).show();
+                }
 
                 // 显示处理过的图片
-                debugView.setImageBitmap(ImageProcess.getBitMap());
+                Utils.matToBitmap(ImageProcess.getMat2(copy2_re), copy2_re);
+                debugView2.setImageBitmap(copy2_re);
+
+                long time2 = System.currentTimeMillis();
+
 
                 BigDecimal bg = new BigDecimal(treeWidth);
                 treeWidth = bg.setScale(2, BigDecimal.ROUND_UP).doubleValue();
