@@ -40,12 +40,18 @@
         <ImageView
                 android:id="@+id/iv"
                 android:layout_width="match_parent"
-                android:layout_height="300px"/>
+                android:layout_height="600px"/>
 
         <ImageView
             android:id="@+id/debugImage"
             android:layout_width="match_parent"
-            android:layout_marginTop="50px"
+            android:layout_marginTop="650px"
+            android:layout_height="600px"/>
+
+        <ImageView
+            android:id="@+id/debugImage2"
+            android:layout_width="match_parent"
+            android:layout_marginTop="1250px"
             android:layout_height="300px"/>
     </FrameLayout>
 
