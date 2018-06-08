@@ -71,6 +71,20 @@ public class MarkPadFragment extends Fragment {
             photo =BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         }
 
+        //        double widthRatio = screenWidth/(photo.getWidth()+0.0);
+//        double heightRatio = screenHeight/(photo.getHeight()+0.0);
+//        double photoRatio = photo.getWidth()/(photo.getHeight()+0.0);
+//        if(widthRatio<heightRatio && widthRatio<1){
+//            right = screenWidth;
+//            bottom = (int)(screenHeight*photoRatio);
+//        }else if(heightRatio<widthRatio && heightRatio<1){
+//            right = (int)(screenWidth/heightRatio);
+//            bottom = screenHeight;
+//        }else{
+//            right = photo.getWidth();
+//            bottom = photo.getHeight();
+//        }
+
         mContext = getContext();
         matrix = new Matrix();
         matrix.setRotate(90);

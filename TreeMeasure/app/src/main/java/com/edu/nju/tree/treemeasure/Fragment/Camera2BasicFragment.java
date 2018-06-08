@@ -56,7 +56,10 @@ import com.edu.nju.tree.treemeasure.View.LevelView;
 import com.edu.nju.tree.treemeasure.utils.ImageProcess;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -269,6 +272,16 @@ public class Camera2BasicFragment extends Fragment
         }
     };
 
+    //todo 这里多一个mFile
+//    private final ImageReader.OnImageAvailableListener mOnImageAvailableListener
+//            = new ImageReader.OnImageAvailableListener() {
+//
+//        @Override
+//        public void onImageAvailable(ImageReader reader) {
+//            mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
+//        }
+//
+//    };
     /**
      * {@link CaptureRequest.Builder} for the camera preview
      */
@@ -331,7 +344,6 @@ public class Camera2BasicFragment extends Fragment
                     }
                     //todo 也不知道有没有用
                     else{
-
                         mState = STATE_PICTURE_TAKEN;
                         captureStillPicture();
                     }
@@ -883,7 +895,8 @@ public class Camera2BasicFragment extends Fragment
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
-                    Log.d(TAG, mFile.toString());
+
+//                    Log.d(TAG, mFile.toString());
                     unlockFocus();
                 }
             };
@@ -928,6 +941,9 @@ public class Camera2BasicFragment extends Fragment
                     mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
+        } catch (Exception e){
+            //todo 程序总是在这崩溃，说是Attempt to invoke virtual method 'int android.hardware.camera2.CameraCaptureSession.capture(android.hardware.camera2.CaptureRequest, android.hardware.camera2.CameraCaptureSession$CaptureCallback, android.os.Handler)' on a null object reference我也没有别的办法了
+            e.printStackTrace();
         }
     }
 
@@ -935,7 +951,7 @@ public class Camera2BasicFragment extends Fragment
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.picture: {
-
+                //todo 这里是不是应该睡一下等待相机启动
                 takePicture();
                 //todo 将获得的图片显示在界面上
                 //这里解释一下，本来是既可以直接就显示在当前的fragment上的，但是想到还要做会退按钮什么的，就直接让相机拍完照就跳转到另一个fragment中了
@@ -1040,41 +1056,41 @@ public class Camera2BasicFragment extends Fragment
         @Override
         //todo 界面跳转到标注界面
         public void run() {
-//            ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
-//            byte[] bytes = new byte[buffer.remaining()];
-//            buffer.get(bytes);
-//            FileOutputStream output = null;
-//
-//            SimpleDateFormat sdf = new SimpleDateFormat(
-//                    "yyyyMMdd_HHmmss",
-//                    Locale.US);
-//
-//            String fname = "IMG_" +
-//                    sdf.format(new Date())
-//                    + ".jpg";
-//            mFile = new File(getActivity().getApplication().getExternalFilesDir(null), fname);
-//
-//            try {
-//                output = new FileOutputStream(mFile);
-//                output.write(bytes);
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            finally {
-//                mImage.close();
-//                if (null != output) {
-//                    try {
-//                        output.close();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-            Log.d("mImage", "宽"+mImage.getWidth()+"高"+mImage.getHeight());
             ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
             byte[] bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
+            FileOutputStream output = null;
+
+            SimpleDateFormat sdf = new SimpleDateFormat(
+                    "yyyyMMdd_HHmmss",
+                    Locale.US);
+
+            String fname = "IMG_" +
+                    sdf.format(new Date())
+                    + ".jpg";
+            mFile = new File(getActivity().getApplication().getExternalFilesDir(null), fname);
+
+            try {
+                output = new FileOutputStream(mFile);
+                output.write(bytes);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            finally {
+                mImage.close();
+                if (null != output) {
+                    try {
+                        output.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+//            Log.d("mImage", "宽"+mImage.getWidth()+"高"+mImage.getHeight());
+//            ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
+//            byte[] bytes = new byte[buffer.remaining()];
+//            buffer.get(bytes);
             //跳转到标注界面
             Bundle bundle = new Bundle();
             bundle.putSerializable("bytes",bytes);
