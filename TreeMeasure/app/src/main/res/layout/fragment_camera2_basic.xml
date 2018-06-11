@@ -29,9 +29,21 @@
 
 
     <TextView
+            android:id="@+id/horizontal_box"
             android:layout_width="540px"
             android:layout_height="250px"
             android:layout_marginTop="600px"
+            android:layout_centerHorizontal="true"
+            android:text="请在虚线框内拍摄"
+            android:textSize="14sp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/bg_rectangle_with_stroke_dash" />
+
+    <TextView
+            android:id="@+id/vertical_box"
+            android:layout_width="250px"
+            android:layout_height="540px"
+            android:layout_marginTop="480px"
             android:layout_centerHorizontal="true"
             android:text="请在虚线框内拍摄"
             android:textSize="14sp"

@@ -46,10 +46,7 @@ import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.*;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import com.edu.nju.tree.treemeasure.View.AutoFitTextureView;
 import com.edu.nju.tree.treemeasure.R;
 import com.edu.nju.tree.treemeasure.View.LevelView;
@@ -81,6 +78,8 @@ public class Camera2BasicFragment extends Fragment
     private float[] magneticFieldValues = new float[3];
     private TextView degreeTextView;
     private LevelView levelView;
+    private TextView horizontalBoxView;
+    private TextView verticalBoxView;
 
     private final SensorEventListener sensorEventListener = new SensorEventListener() {
 
@@ -465,6 +464,9 @@ public class Camera2BasicFragment extends Fragment
         levelView = view.findViewById(R.id.levelview);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         degreeTextView = (TextView) view.findViewById(R.id.degree);
+        horizontalBoxView = view.findViewById(R.id.horizontal_box);
+        verticalBoxView = view.findViewById(R.id.vertical_box);
+        verticalBoxView.setVisibility(View.INVISIBLE);
         return view;
 //        return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
     }
@@ -993,25 +995,53 @@ public class Camera2BasicFragment extends Fragment
 
                 TextView textView = new TextView(activity);
                 textView.setText("距离(cm):");
-                textView.setTextSize(22);
+                textView.setTextSize(18);
 
                 final EditText edit = new EditText(activity);
                 edit.setHint("请填写距离");
                 edit.setInputType(InputType.TYPE_CLASS_NUMBER);
-                edit.setWidth(550);
+//                edit.setWidth(550);
                 edit.setTextSize(18);
 
+                final RadioGroup radioGroup = new RadioGroup(activity);
+                radioGroup.setOrientation(RadioGroup.VERTICAL);
+                final RadioButton horizontalRadioButton = new RadioButton(activity);
+                final RadioButton verticalRadioButton = new RadioButton(activity);
+                radioGroup.addView(horizontalRadioButton);
+                radioGroup.addView(verticalRadioButton);
+                horizontalRadioButton.setText("使用水平的两个激光");
+                verticalRadioButton.setText("使用竖直的两个激光");
+                horizontalRadioButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        horizontalBoxView.setVisibility(View.VISIBLE);
+                        verticalBoxView.setVisibility(View.INVISIBLE);
+                    }
+                });
+                verticalRadioButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        verticalBoxView.setVisibility(View.VISIBLE);
+                        horizontalBoxView.setVisibility(View.INVISIBLE);
+                    }
+                });
+
                 LinearLayout layout = new LinearLayout(activity);
-                layout.setHorizontalGravity(LinearLayout.HORIZONTAL);
+                layout.setOrientation(LinearLayout.VERTICAL);
                 layout.addView(textView);
                 layout.addView(edit);
+                layout.addView(radioGroup);
 
                 layout.setPadding(100, 0, 100, 20);
                 builder.setView(layout);
                 builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ImageProcess.setRealDistance(Double.parseDouble(edit.getText().toString()));
+                        if(edit.getText().toString().equals("")){
+                            Toast.makeText(getActivity(), "输入不能为空哦～", Toast.LENGTH_SHORT).show();
+                        }else {
+                            ImageProcess.setRealDistance(Double.parseDouble(edit.getText().toString()));
+                        }
                        // Toast.makeText(getActivity(), "你输入的是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
