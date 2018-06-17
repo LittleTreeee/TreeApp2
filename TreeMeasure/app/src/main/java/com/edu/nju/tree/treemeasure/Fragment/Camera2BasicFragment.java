@@ -78,8 +78,6 @@ public class Camera2BasicFragment extends Fragment
     private float[] magneticFieldValues = new float[3];
     private TextView degreeTextView;
     private LevelView levelView;
-    private TextView horizontalBoxView;
-    private TextView verticalBoxView;
 
     private final SensorEventListener sensorEventListener = new SensorEventListener() {
 
@@ -464,9 +462,6 @@ public class Camera2BasicFragment extends Fragment
         levelView = view.findViewById(R.id.levelview);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         degreeTextView = (TextView) view.findViewById(R.id.degree);
-        horizontalBoxView = view.findViewById(R.id.horizontal_box);
-        verticalBoxView = view.findViewById(R.id.vertical_box);
-        verticalBoxView.setVisibility(View.INVISIBLE);
         return view;
 //        return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
     }
@@ -1003,34 +998,10 @@ public class Camera2BasicFragment extends Fragment
 //                edit.setWidth(550);
                 edit.setTextSize(18);
 
-                final RadioGroup radioGroup = new RadioGroup(activity);
-                radioGroup.setOrientation(RadioGroup.VERTICAL);
-                final RadioButton horizontalRadioButton = new RadioButton(activity);
-                final RadioButton verticalRadioButton = new RadioButton(activity);
-                radioGroup.addView(horizontalRadioButton);
-                radioGroup.addView(verticalRadioButton);
-                horizontalRadioButton.setText("使用水平的两个激光");
-                verticalRadioButton.setText("使用竖直的两个激光");
-                horizontalRadioButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        horizontalBoxView.setVisibility(View.VISIBLE);
-                        verticalBoxView.setVisibility(View.INVISIBLE);
-                    }
-                });
-                verticalRadioButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        verticalBoxView.setVisibility(View.VISIBLE);
-                        horizontalBoxView.setVisibility(View.INVISIBLE);
-                    }
-                });
-
                 LinearLayout layout = new LinearLayout(activity);
                 layout.setOrientation(LinearLayout.VERTICAL);
                 layout.addView(textView);
                 layout.addView(edit);
-                layout.addView(radioGroup);
 
                 layout.setPadding(100, 0, 100, 20);
                 builder.setView(layout);

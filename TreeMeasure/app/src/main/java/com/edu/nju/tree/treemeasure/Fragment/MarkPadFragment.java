@@ -156,7 +156,9 @@ public class MarkPadFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                //todo 取消
+                //todo 给图片打上标签后保存
+
+                //todo 返回到拍照界面
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.container, Camera2BasicFragment.newInstance(), null)
