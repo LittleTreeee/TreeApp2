@@ -157,6 +157,14 @@ public class MarkPadFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //todo 给图片打上标签后保存
+                Bitmap tempBitmap = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(photo);
+                Paint p = new Paint();
+                p.setColor(Color.RED);
+                p.setTextSize(150);
+//                canvas.drawBitmap(photo, 0, 0, null);
+                canvas.drawText("0",50,150,p);
+                saveImage(photo);
 
                 //todo 返回到拍照界面
                 getActivity().getSupportFragmentManager()

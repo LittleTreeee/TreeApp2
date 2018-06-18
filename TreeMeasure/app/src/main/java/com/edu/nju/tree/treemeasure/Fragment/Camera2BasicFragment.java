@@ -1057,41 +1057,41 @@ public class Camera2BasicFragment extends Fragment
         @Override
         //todo 界面跳转到标注界面
         public void run() {
-            ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
-            byte[] bytes = new byte[buffer.remaining()];
-            buffer.get(bytes);
-            FileOutputStream output = null;
-
-            SimpleDateFormat sdf = new SimpleDateFormat(
-                    "yyyyMMdd_HHmmss",
-                    Locale.US);
-
-            String fname = "IMG_" +
-                    sdf.format(new Date())
-                    + ".jpg";
-            mFile = new File(getActivity().getApplication().getExternalFilesDir(null), fname);
-
-            try {
-                output = new FileOutputStream(mFile);
-                output.write(bytes);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            finally {
-                mImage.close();
-                if (null != output) {
-                    try {
-                        output.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-//            Log.d("mImage", "宽"+mImage.getWidth()+"高"+mImage.getHeight());
 //            ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
 //            byte[] bytes = new byte[buffer.remaining()];
 //            buffer.get(bytes);
+//            FileOutputStream output = null;
+//
+//            SimpleDateFormat sdf = new SimpleDateFormat(
+//                    "yyyyMMdd_HHmmss",
+//                    Locale.US);
+//
+//            String fname = "IMG_" +
+//                    sdf.format(new Date())
+//                    + ".jpg";
+//            mFile = new File(getActivity().getApplication().getExternalFilesDir(null), fname);
+//
+//            try {
+//                output = new FileOutputStream(mFile);
+//                output.write(bytes);
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            finally {
+//                mImage.close();
+//                if (null != output) {
+//                    try {
+//                        output.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+            Log.d("mImage", "宽"+mImage.getWidth()+"高"+mImage.getHeight());
+            ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
+            byte[] bytes = new byte[buffer.remaining()];
+            buffer.get(bytes);
             //跳转到标注界面
             Bundle bundle = new Bundle();
             bundle.putSerializable("bytes",bytes);
