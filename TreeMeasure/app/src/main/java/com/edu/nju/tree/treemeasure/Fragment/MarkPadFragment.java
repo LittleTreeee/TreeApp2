@@ -125,6 +125,14 @@ public class MarkPadFragment extends Fragment {
                     new AlertDialog.Builder(mContext).setTitle("treewidth "+e.getMessage()).setPositiveButton("确定",null).show();
                 }
 
+                //保存图片
+                Canvas canvas = new Canvas(photo);
+                Paint p = new Paint();
+                p.setColor(Color.RED);
+                p.setTextSize(150);
+                canvas.drawText(treeWidth+"",50,150,p);
+                saveImage(photo);
+
                 try{
                     Utils.matToBitmap(ImageProcess.getMat(copy1), copy1);
                     debugView.setImageBitmap(copy1);
@@ -148,6 +156,7 @@ public class MarkPadFragment extends Fragment {
                         .show();
 
 
+
             }
         });
 
@@ -157,13 +166,13 @@ public class MarkPadFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //todo 给图片打上标签后保存
-                Bitmap tempBitmap = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.ARGB_8888);
+//                Bitmap tempBitmap = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(photo);
                 Paint p = new Paint();
                 p.setColor(Color.RED);
                 p.setTextSize(150);
 //                canvas.drawBitmap(photo, 0, 0, null);
-                canvas.drawText("0",50,150,p);
+                canvas.drawText("无效",50,150,p);
                 saveImage(photo);
 
                 //todo 返回到拍照界面
