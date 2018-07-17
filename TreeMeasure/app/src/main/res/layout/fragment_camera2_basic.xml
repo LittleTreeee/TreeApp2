@@ -30,7 +30,7 @@
     <FrameLayout
             android:id="@+id/control"
             android:layout_width="match_parent"
-            android:layout_height="300px"
+            android:layout_height="150dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
             android:background="#000000">
@@ -38,7 +38,7 @@
         <TextView
                 android:id="@+id/degree"
                 android:text="test"
-                android:textSize="60px"
+                android:textSize="18sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#ffffff"
@@ -51,6 +51,7 @@
                 android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:background="@drawable/ic_btn_camera"
+
         />
 
         <ImageButton

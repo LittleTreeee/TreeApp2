@@ -2,6 +2,7 @@ package com.edu.nju.tree.treemeasure.Fragment;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.*;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -42,6 +43,7 @@ public class MarkPadFragment extends Fragment {
     private Button mBtnOK,mBtnCancel;
     private byte[] bytes;
     private Bitmap photo;
+    private Bitmap finalBitmap;
     private Matrix matrix; //矩阵，空间变换
     private BitmapFactory.Options options;
     private int right = 0;
@@ -60,10 +62,11 @@ public class MarkPadFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mark, null);
         imageView = view.findViewById(R.id.iv);
-        debugView = view.findViewById(R.id.debugImage);
+
         mBtnOK = (Button) view.findViewById(R.id.write_pad_ok);
         mBtnCancel = (Button) view.findViewById(R.id.write_pad_cancel);
-        debugView2 = view.findViewById(R.id.debugImage2);
+//      debugView = view.findViewById(R.id.debugImage);
+//        debugView2 = view.findViewById(R.id.debugImage2);
 
         // 获取屏幕尺寸
         DisplayMetrics mDisplayMetrics = new DisplayMetrics();
@@ -96,14 +99,22 @@ public class MarkPadFragment extends Fragment {
         photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 
         // 显示的图片
-        final Bitmap finalBitmap = Bitmap.createBitmap(photo, 750, 1700 , 1500, 800);
-        imageView.setImageBitmap(finalBitmap);
+        finalBitmap = Bitmap.createBitmap(photo, 750, 1700 , 1500, 800);
+        imageView.setImageBitmap(photo);
 
         mBtnOK.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-//                //todo 保存
+                //todo 跳转到显示结果界面
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("bitmap",finalBitmap);
+                Fragment resultFragment = new ResultFragment();
+                resultFragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container, resultFragment, null)
+                        .commit();
 //                saveImage(finalBitmap);
 //                try {
 //                    Thread.sleep(2000);
@@ -112,48 +123,49 @@ public class MarkPadFragment extends Fragment {
 //                }
 //                Toast.makeText(mContext, "开始计算...", Toast.LENGTH_LONG).show();
 
-                double treeWidth = 0;
-                long time1 = System.currentTimeMillis();
-                Bitmap copy1 = finalBitmap.copy(finalBitmap.getConfig(), true);
-                Bitmap copy2 = finalBitmap.copy(finalBitmap.getConfig(), true);
-                Bitmap copy2_re = Bitmap.createBitmap(copy2, 0, 300, copy2.getWidth(), 200);
-
-
-                try {
-                    treeWidth = ImageProcess.treeWidth(finalBitmap);
-                }catch (RuntimeException e){
-                    new AlertDialog.Builder(mContext).setTitle("treewidth "+e.getMessage()).setPositiveButton("确定",null).show();
-                }
-
-                //保存图片
-                Canvas canvas = new Canvas(photo);
-                Paint p = new Paint();
-                p.setColor(Color.RED);
-                p.setTextSize(150);
-                canvas.drawText(treeWidth+"",50,150,p);
-//                saveImage(photo);
-
-                try{
-                    Utils.matToBitmap(ImageProcess.getMat(copy1), copy1);
-                    debugView.setImageBitmap(copy1);
-                }catch (RuntimeException e){
-                    new AlertDialog.Builder(mContext).setTitle("Mat1 " + e.getMessage()).setPositiveButton("确定",null).show();
-                }
-
-                // 显示处理过的图片
-                Utils.matToBitmap(ImageProcess.getMat2(copy2_re), copy2_re);
-                debugView2.setImageBitmap(copy2_re);
-
-                long time2 = System.currentTimeMillis();
-
-
-                BigDecimal bg = new BigDecimal(treeWidth);
-                treeWidth = bg.setScale(2, BigDecimal.ROUND_UP).doubleValue();
-
-                new AlertDialog.Builder(mContext).setTitle("计算结果")
-                        .setMessage("胸径： "+treeWidth + "  "+ "时间： "+(time2-time1) )
-                        .setPositiveButton("确定",null)
-                        .show();
+//                double treeWidth = 0;
+////                long time1 = System.currentTimeMillis();
+////                Bitmap copy1 = finalBitmap.copy(finalBitmap.getConfig(), true);
+////                Bitmap copy2 = finalBitmap.copy(finalBitmap.getConfig(), true);
+////                Bitmap copy2_re = Bitmap.createBitmap(copy2, 0, 300, copy2.getWidth(), 200);
+//
+//
+//                try {
+//                    treeWidth = ImageProcess.treeWidth(finalBitmap);
+//                }catch (RuntimeException e){
+//
+////                    new AlertDialog.Builder(mContext).setTitle("treewidth "+e.getMessage()).setPositiveButton("确定",null).show();
+//                }
+//
+//                //保存图片
+//                Canvas canvas = new Canvas(photo);
+//                Paint p = new Paint();
+//                p.setColor(Color.RED);
+//                p.setTextSize(150);
+//                canvas.drawText(treeWidth+"",50,150,p);
+////                saveImage(photo);
+////
+////                try{
+////                    Utils.matToBitmap(ImageProcess.getMat(copy1), copy1);
+////                    debugView.setImageBitmap(copy1);
+////                }catch (RuntimeException e){
+////                    new AlertDialog.Builder(mContext).setTitle("Mat1 " + e.getMessage()).setPositiveButton("确定",null).show();
+////                }
+////
+////                // 显示处理过的图片
+////                Utils.matToBitmap(ImageProcess.getMat2(copy2_re), copy2_re);
+////                debugView2.setImageBitmap(copy2_re);
+////
+////                long time2 = System.currentTimeMillis();
+//
+//
+//                BigDecimal bg = new BigDecimal(treeWidth);
+//                treeWidth = bg.setScale(2, BigDecimal.ROUND_UP).doubleValue();
+//
+////                new AlertDialog.Builder(mContext).setTitle("计算结果")
+////                        .setMessage("胸径： "+treeWidth + "  "+ "时间： "+(time2-time1) )
+////                        .setPositiveButton("确定",null)
+////                        .show();
 
 
 
@@ -165,14 +177,12 @@ public class MarkPadFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                //todo 给图片打上标签后保存
-//                Bitmap tempBitmap = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(photo);
-                Paint p = new Paint();
-                p.setColor(Color.RED);
-                p.setTextSize(150);
-//                canvas.drawBitmap(photo, 0, 0, null);
-                canvas.drawText("无效",50,150,p);
+//                //todo 给图片打上标签后保存
+//                Canvas canvas = new Canvas(photo);
+//                Paint p = new Paint();
+//                p.setColor(Color.RED);
+//                p.setTextSize(150);
+//                canvas.drawText("无效",50,150,p);
 //                saveImage(photo);
 
                 //todo 返回到拍照界面
@@ -188,5 +198,39 @@ public class MarkPadFragment extends Fragment {
         return view;
     }
 
+    private void saveImage(Bitmap bitmap){
+        FileOutputStream output = null;
+
+        SimpleDateFormat sdf = new SimpleDateFormat(
+                "yyyyMMdd_HHmmss",
+                Locale.US);
+
+        String fname = "IMG_" +
+                sdf.format(new Date())
+                + ".jpg";
+        File mFile = new File(getActivity().getApplication().getExternalFilesDir(null), fname);
+
+
+        Log.d("ImagePath", mFile.toString());
+
+        try {
+            output = new FileOutputStream(mFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
+            output.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (null != output) {
+                try {
+                    output.close();
+                    Log.d("outputSuccess", mFile.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
 }

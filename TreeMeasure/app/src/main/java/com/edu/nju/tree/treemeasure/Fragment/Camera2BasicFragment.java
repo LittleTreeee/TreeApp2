@@ -1209,7 +1209,8 @@ public class Camera2BasicFragment extends Fragment
         levelView.bubbleY = y;
         levelView.lineY = mTextureView.getHeight()/2;
         levelView.postInvalidate();
-        degreeTextView.setText(showDegree+" "+isVertical);
+//        degreeTextView.setText(showDegree+" "+isVertical);
+        degreeTextView.setText("调整手机使小球碰线，"+isVertical);
     }
 
 }

@@ -9,7 +9,7 @@
     <LinearLayout
             android:id="@+id/bottom_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="150dp"
             android:background="#000000"
             android:layout_alignParentBottom="true"
     >
@@ -19,7 +19,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="计算"/>
+                android:text="计算"
+                android:layout_gravity="bottom"
+        />
 
 
         <Button
@@ -27,7 +29,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="重拍"/>
+                android:text="重拍"
+                android:layout_gravity="bottom"
+        />
     </LinearLayout>
 
     <FrameLayout
@@ -40,19 +44,8 @@
         <ImageView
                 android:id="@+id/iv"
                 android:layout_width="match_parent"
-                android:layout_height="600px"/>
-
-        <ImageView
-            android:id="@+id/debugImage"
-            android:layout_width="match_parent"
-            android:layout_marginTop="650px"
-            android:layout_height="600px"/>
-
-        <ImageView
-            android:id="@+id/debugImage2"
-            android:layout_width="match_parent"
-            android:layout_marginTop="1250px"
-            android:layout_height="300px"/>
+                android:layout_height="wrap_content"
+                />
     </FrameLayout>
 
 </RelativeLayout>

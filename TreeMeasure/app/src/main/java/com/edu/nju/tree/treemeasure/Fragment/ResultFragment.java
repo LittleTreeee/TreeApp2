@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.edu.nju.tree.treemeasure.R;
 import com.edu.nju.tree.treemeasure.utils.ImageProcess;
@@ -27,6 +28,9 @@ import java.util.Locale;
 public class ResultFragment extends Fragment {
     private ImageView imageView;
     private Button btnSave,btnCancel;
+    private TextView resultView;
+    private Bitmap bitmap;
+    private double treeWidth;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,15 +38,39 @@ public class ResultFragment extends Fragment {
         imageView = view.findViewById(R.id.result_imageview);
         btnSave = view.findViewById(R.id.result_save);
         btnCancel = view.findViewById(R.id.result_cancel);
+        resultView = view.findViewById(R.id.result_text);
 
-//        imageView.setImageBitmap(finalBitmap);
+        //todo
+        bitmap = (Bitmap)getArguments().get("bitmap");
+        if(bitmap!=null) {
+            treeWidth = 1;
+            try {
+                treeWidth = ImageProcess.treeWidth(bitmap);
+            }catch (RuntimeException e){
+                resultView.setText(e.getMessage());
+            }
+
+            // 显示处理过的图片
+            Utils.matToBitmap(ImageProcess.getMat2(bitmap), bitmap);
+            imageView.setImageBitmap(bitmap);
+
+
+            BigDecimal bg = new BigDecimal(treeWidth);
+            treeWidth = bg.setScale(2, BigDecimal.ROUND_UP).doubleValue();
+            resultView.setText("胸径："+treeWidth);
+        }
 
         btnSave.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
 //                //todo 保存
-//                saveImage(photo);
+                //保存图片
+                Canvas canvas = new Canvas(bitmap);
+                Paint p = new Paint();
+                p.setColor(Color.RED);
+                p.setTextSize(150);
+                canvas.drawText(treeWidth+"",50,150,p);
+                saveImage(bitmap);
             }
         });
 
@@ -52,13 +80,17 @@ public class ResultFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //todo 给图片打上标签后保存
-
+                Canvas canvas = new Canvas(bitmap);
+                Paint p = new Paint();
+                p.setColor(Color.RED);
+                p.setTextSize(150);
+                canvas.drawText("重新计算",50,150,p);
+                saveImage(bitmap);
                 //todo 返回到拍照界面
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.container, Camera2BasicFragment.newInstance(), null)
                         .commit();
-//                getActivity().getSupportFragmentManager().popBackStack();
                 Toast.makeText(getContext(), "取消", Toast.LENGTH_SHORT).show();
             }
         });

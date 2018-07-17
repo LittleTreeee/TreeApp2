@@ -21,7 +21,7 @@
     <RelativeLayout
             android:id="@+id/result_bottom_bar"
             android:layout_width="match_parent"
-            android:layout_height="300px"
+            android:layout_height="150dp"
             android:background="#000000"
             android:orientation="vertical"
             android:layout_alignParentBottom="true"
@@ -31,7 +31,7 @@
         <TextView
                 android:id="@+id/result_text"
                 android:text="胸径"
-                android:textSize="60px"
+                android:textSize="18sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#ffffff"
