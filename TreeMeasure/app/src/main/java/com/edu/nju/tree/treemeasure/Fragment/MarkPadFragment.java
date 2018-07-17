@@ -131,7 +131,7 @@ public class MarkPadFragment extends Fragment {
                 p.setColor(Color.RED);
                 p.setTextSize(150);
                 canvas.drawText(treeWidth+"",50,150,p);
-                saveImage(photo);
+//                saveImage(photo);
 
                 try{
                     Utils.matToBitmap(ImageProcess.getMat(copy1), copy1);
@@ -173,7 +173,7 @@ public class MarkPadFragment extends Fragment {
                 p.setTextSize(150);
 //                canvas.drawBitmap(photo, 0, 0, null);
                 canvas.drawText("无效",50,150,p);
-                saveImage(photo);
+//                saveImage(photo);
 
                 //todo 返回到拍照界面
                 getActivity().getSupportFragmentManager()
@@ -188,40 +188,5 @@ public class MarkPadFragment extends Fragment {
         return view;
     }
 
-
-    private void saveImage(Bitmap bitmap){
-        FileOutputStream output = null;
-
-        SimpleDateFormat sdf = new SimpleDateFormat(
-                "yyyyMMdd_HHmmss",
-                Locale.US);
-
-        String fname = "IMG_" +
-                sdf.format(new Date())
-                + ".jpg";
-        File mFile = new File(getActivity().getApplication().getExternalFilesDir(null), fname);
-
-
-        Log.d("ImagePath", mFile.toString());
-
-        try {
-            output = new FileOutputStream(mFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
-            output.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        finally {
-            if (null != output) {
-                try {
-                    output.close();
-                    Log.d("outputSuccess", mFile.toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
 }
